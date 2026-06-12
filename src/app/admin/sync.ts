@@ -39,7 +39,7 @@ async function getLiveMatches() {
   return data.response?.livescores || [];
 }
 
-async function getOurMatches(token) {
+async function getOurMatches(token: string) {
   const res = await fetch(GOLAZO_API + '/api/matches', {
     headers: { Authorization: 'Bearer ' + token },
   });

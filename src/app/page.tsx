@@ -18,17 +18,11 @@ const formatFecha = (dateStr: string) => {
   return d.toLocaleDateString('es-CO', { day: '2-digit', month: 'short' }) + ' ' + d.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' });
 };
 
-type Pronostico = { marcador: string; ganador: string; confianza: string; analisis: string; };
-
-async function getPrediction(home: string, away: string, grupo: string): Promise<Pronostico> {
-  const response = await fetch('/api/predict', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ home, away, grupo })
-  });
-  const result = await response.json();
-  return result;
-}
+const CLASIFICACION_COLOR: Record<string, string> = {
+  qualify: 'bg-green-700',
+  third: 'bg-yellow-700',
+  eliminated: 'bg-transparent',
+};
 
 export default function Home() {
   const [torneo, setTorneo] = useState<any>(null);
@@ -37,14 +31,16 @@ export default function Home() {
   const [posiciones, setPosiciones] = useState<any[]>([]);
   const [grupoActivo, setGrupoActivo] = useState<string>('A');
   const [tab, setTab] = useState('partidos');
-  const [pronosticos, setPronosticos] = useState<Record<string, Pronostico>>({});
-  const [loadingPron, setLoadingPron] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     fetch(API + '/api/tournaments').then(r => r.json()).then(d => {
       const t = d.data[0];
       setTorneo(t);
-      if (t) fetch(API + '/api/tournaments/' + t.id + '/standings').then(r => r.json()).then(d => setPosiciones(d));
+      if (t) {
+        fetch(API + '/api/tournaments/' + t.id + '/standings')
+          .then(r => r.json())
+          .then(d => setPosiciones(d));
+      }
     });
     fetch(API + '/api/teams').then(r => r.json()).then(d => setEquipos(d.data || d));
     fetch(API + '/api/matches').then(r => r.json()).then(d => setPartidos(d.data || []));
@@ -53,22 +49,9 @@ export default function Home() {
   const grupoActualData = posiciones.find(g => g.group?.name === grupoActivo);
   const grupos = posiciones.map(g => g.group?.name).filter(Boolean).sort();
 
-  const handlePredecir = async (partido: any) => {
-    const key = partido.id;
-    if (pronosticos[key] || loadingPron[key]) return;
-    setLoadingPron(prev => ({ ...prev, [key]: true }));
-    try {
-      const pred = await getPrediction(partido.home_team?.name, partido.away_team?.name, partido.groups?.name);
-      setPronosticos(prev => ({ ...prev, [key]: pred }));
-    } finally {
-      setLoadingPron(prev => ({ ...prev, [key]: false }));
-    }
-  };
-
-  const confianzaColor: Record<string, string> = { Alta: 'text-green-400', Media: 'text-yellow-400', Baja: 'text-red-400' };
-
   return (
     <main className="min-h-screen bg-black text-white pb-24">
+
       <header className="bg-black border-b-2 border-yellow-500 px-4 py-3 flex items-center gap-3">
         <div className="flex items-center gap-2 flex-1">
           <span className="text-2xl">⚽</span>
@@ -91,7 +74,6 @@ export default function Home() {
         {[
           { id: 'partidos', label: 'Partidos' },
           { id: 'posiciones', label: 'Posiciones' },
-          { id: 'pronosticos', label: 'IA' },
           { id: 'equipos', label: 'Equipos' },
           { id: 'polla', label: 'Empresarial' },
           { id: 'torneo', label: 'Torneo' },
@@ -107,7 +89,7 @@ export default function Home() {
 
         {tab === 'partidos' && (
           <div className="space-y-3">
-            {partidos.length === 0 && <p className="text-gray-500 text-center py-10">Cargando partidos...</p>}
+            {partidos.length === 0 && <p className="text-gray-500 text-center py-10">No hay partidos programados.</p>}
             {partidos.map(p => (
               <div key={p.id} className="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden hover:border-yellow-800 transition-colors">
                 <div className="flex items-center px-4 py-3 gap-3">
@@ -133,29 +115,49 @@ export default function Home() {
 
         {tab === 'posiciones' && (
           <div className="space-y-4">
+            {/* Selector de grupo */}
             <div className="flex gap-1 flex-wrap">
               {grupos.map(g => (
                 <button key={g} onClick={() => setGrupoActivo(g)}
-                  className={'px-3 py-1.5 rounded-lg text-xs font-black uppercase transition-colors ' + (grupoActivo === g ? 'bg-yellow-500 text-black' : 'bg-gray-800 text-gray-400 hover:text-white')}>
+                  className={'px-3 py-1.5 rounded-lg text-xs font-black uppercase transition-colors ' +
+                    (grupoActivo === g ? 'bg-yellow-500 text-black' : 'bg-gray-800 text-gray-400 hover:text-white')}>
                   {g}
                 </button>
               ))}
             </div>
+
+            {/* Tabla del grupo activo */}
             {grupoActualData ? (
               <div className="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden">
-                <div className="px-4 py-3 bg-gray-950 border-b border-gray-800">
+                <div className="px-4 py-3 bg-gray-950 border-b border-gray-800 flex items-center gap-2">
                   <span className="text-yellow-400 font-black text-lg">Grupo {grupoActualData.group.name}</span>
+                  {grupoActualData.group.host_city && (
+                    <span className="text-gray-500 text-xs">· {grupoActualData.group.host_city}</span>
+                  )}
                 </div>
+
+                {/* Header tabla */}
                 <div className="grid grid-cols-[2rem_1fr_2rem_2rem_2rem_2rem_2rem_2.5rem] gap-1 px-3 py-2 text-xs text-gray-500 font-bold uppercase border-b border-gray-800">
-                  <span className="text-center">#</span><span>Equipo</span>
-                  <span className="text-center">PJ</span><span className="text-center">PG</span>
-                  <span className="text-center">PE</span><span className="text-center">PP</span>
-                  <span className="text-center">DG</span><span className="text-center text-yellow-400">PTS</span>
+                  <span className="text-center">#</span>
+                  <span>Equipo</span>
+                  <span className="text-center">PJ</span>
+                  <span className="text-center">PG</span>
+                  <span className="text-center">PE</span>
+                  <span className="text-center">PP</span>
+                  <span className="text-center">DG</span>
+                  <span className="text-center text-yellow-400">PTS</span>
                 </div>
+
+                {/* Filas */}
                 {grupoActualData.rows.map((row: any, i: number) => (
-                  <div key={row.team.id} className={'grid grid-cols-[2rem_1fr_2rem_2rem_2rem_2rem_2rem_2.5rem] gap-1 px-3 py-3 items-center border-b border-gray-800 last:border-0 ' + (i < 2 ? 'bg-green-950 bg-opacity-30' : '')}>
+                  <div key={row.team.id}
+                    className={'grid grid-cols-[2rem_1fr_2rem_2rem_2rem_2rem_2rem_2.5rem] gap-1 px-3 py-3 items-center text-sm border-b border-gray-800 last:border-0 ' +
+                      (i < 2 ? 'bg-green-950 bg-opacity-30' : '')}>
                     <div className="flex items-center justify-center">
-                      <span className={'w-5 h-5 rounded-full flex items-center justify-center text-xs font-black ' + (i === 0 ? 'bg-yellow-500 text-black' : i === 1 ? 'bg-gray-600 text-white' : 'text-gray-500')}>{i + 1}</span>
+                      <span className={'w-5 h-5 rounded-full flex items-center justify-center text-xs font-black ' +
+                        (i === 0 ? 'bg-yellow-500 text-black' : i === 1 ? 'bg-gray-600 text-white' : 'text-gray-500')}>
+                        {i + 1}
+                      </span>
                     </div>
                     <div className="flex items-center gap-2 min-w-0">
                       <FlagImg code={row.team.flag} />
@@ -168,60 +170,22 @@ export default function Home() {
                     <span className="text-center text-gray-400 text-xs">{row.pg}</span>
                     <span className="text-center text-gray-400 text-xs">{row.pe}</span>
                     <span className="text-center text-gray-400 text-xs">{row.pp}</span>
-                    <span className={'text-center text-xs font-bold ' + (row.dg > 0 ? 'text-green-400' : row.dg < 0 ? 'text-red-400' : 'text-gray-400')}>{row.dg > 0 ? '+' : ''}{row.dg}</span>
+                    <span className={'text-center text-xs font-bold ' + (row.dg > 0 ? 'text-green-400' : row.dg < 0 ? 'text-red-400' : 'text-gray-400')}>
+                      {row.dg > 0 ? '+' : ''}{row.dg}
+                    </span>
                     <span className="text-center font-black text-yellow-400">{row.pts}</span>
                   </div>
                 ))}
+
+                {/* Leyenda */}
                 <div className="px-3 py-2 flex gap-4 text-xs text-gray-600 border-t border-gray-800">
                   <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-green-700 inline-block" /> Clasifican</span>
+                  <span className="text-gray-700">PJ=Jugados PG=Ganados PE=Empatados PP=Perdidos DG=Diferencia PTS=Puntos</span>
                 </div>
               </div>
-            ) : <p className="text-gray-500 text-center py-10">Cargando posiciones...</p>}
-          </div>
-        )}
-
-        {tab === 'pronosticos' && (
-          <div className="space-y-4">
-            <div className="bg-gray-900 rounded-xl p-4 border border-yellow-900 text-center">
-              <p className="text-yellow-400 font-black text-lg uppercase">Pronosticos IA</p>
-              <p className="text-gray-400 text-xs mt-1">Analisis generado por inteligencia artificial</p>
-            </div>
-            {partidos.map(p => {
-              const pred = pronosticos[p.id];
-              const loading = loadingPron[p.id];
-              return (
-                <div key={p.id} className="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden">
-                  <div className="flex items-center px-4 py-3 gap-3">
-                    <FlagImg code={p.home_team?.flag} />
-                    <span className="text-sm font-bold text-right flex-1">{p.home_team?.name}</span>
-                    <div className="px-3 py-1 bg-gray-800 rounded-lg text-center min-w-16">
-                      {pred ? <span className="font-black text-yellow-400 text-sm">{pred.marcador}</span> : <span className="text-gray-500 text-xs font-bold">VS</span>}
-                    </div>
-                    <span className="text-sm font-bold flex-1">{p.away_team?.name}</span>
-                    <FlagImg code={p.away_team?.flag} />
-                  </div>
-                  <div className="px-4 pb-3">
-                    {!pred && !loading && (
-                      <button onClick={() => handlePredecir(p)} className="w-full bg-yellow-500 hover:bg-yellow-400 text-black font-black text-xs uppercase py-2 rounded-lg transition-colors">
-                        Predecir con IA
-                      </button>
-                    )}
-                    {loading && <div className="text-center py-2"><span className="text-yellow-400 text-xs animate-pulse">Analizando partido...</span></div>}
-                    {pred && (
-                      <div className="bg-gray-800 rounded-lg p-3 space-y-2">
-                        <div className="flex justify-between"><span className="text-xs text-gray-400">Ganador:</span><span className="text-white font-bold text-xs">{pred.ganador}</span></div>
-                        <div className="flex justify-between"><span className="text-xs text-gray-400">Confianza:</span><span className={'font-bold text-xs ' + (confianzaColor[pred.confianza] || 'text-gray-400')}>{pred.confianza}</span></div>
-                        <p className="text-gray-300 text-xs leading-relaxed border-t border-gray-700 pt-2">{pred.analisis}</p>
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex justify-between px-4 py-2 bg-gray-950 text-xs text-gray-500 border-t border-gray-800">
-                    <span className="text-yellow-700 font-bold">Grupo {p.groups?.name}</span>
-                    <span>{formatFecha(p.match_date)}</span>
-                  </div>
-                </div>
-              );
-            })}
+            ) : (
+              <p className="text-gray-500 text-center py-10">Cargando posiciones...</p>
+            )}
           </div>
         )}
 
@@ -248,7 +212,13 @@ export default function Home() {
                 <p className="text-gray-400 text-sm mt-2">La experiencia definitiva para equipos de trabajo</p>
               </div>
               <div className="space-y-3 mb-6">
-                {['Tabla de posiciones en tiempo real','Predicciones partido a partido','Rankings y estadisticas de tu empresa','Notificaciones de goles y resultados','Bracket personalizado por empresa'].map((item, i) => (
+                {[
+                  'Tabla de posiciones en tiempo real',
+                  'Predicciones partido a partido',
+                  'Rankings y estadisticas de tu empresa',
+                  'Notificaciones de goles y resultados',
+                  'Bracket personalizado por empresa',
+                ].map((item, i) => (
                   <div key={i} className="flex items-center gap-3 bg-black bg-opacity-30 rounded-lg px-4 py-3">
                     <span className="text-yellow-400 font-black">+</span>
                     <p className="text-white text-sm font-semibold">{item}</p>
@@ -261,7 +231,7 @@ export default function Home() {
               <p className="text-center text-gray-500 text-xs mt-3">305 757 2968 · Respuesta inmediata</p>
             </div>
             <div className="grid grid-cols-3 gap-3 text-center">
-              {[['48','Equipos'],['72','Partidos'],['39','Dias']].map((s, i) => (
+              {[['48', 'Equipos'], ['72', 'Partidos'], ['39', 'Dias']].map((s, i) => (
                 <div key={i} className="bg-gray-900 rounded-xl p-4 border border-gray-800">
                   <p className="text-yellow-400 font-black text-2xl">{s[0]}</p>
                   <p className="text-gray-400 text-xs uppercase">{s[1]}</p>
@@ -281,10 +251,22 @@ export default function Home() {
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4 text-sm">
-              <div className="bg-gray-800 rounded-lg p-3"><p className="text-gray-400 text-xs uppercase">Inicio</p><p className="font-bold text-white">{torneo.start_date}</p></div>
-              <div className="bg-gray-800 rounded-lg p-3"><p className="text-gray-400 text-xs uppercase">Final</p><p className="font-bold text-white">{torneo.end_date}</p></div>
-              <div className="bg-gray-800 rounded-lg p-3"><p className="text-gray-400 text-xs uppercase">Premio</p><p className="font-bold text-yellow-400">{torneo.prize}</p></div>
-              <div className="bg-gray-800 rounded-lg p-3"><p className="text-gray-400 text-xs uppercase">Estado</p><span className="bg-yellow-500 text-black px-2 py-1 rounded text-xs font-black uppercase">{torneo.status}</span></div>
+              <div className="bg-gray-800 rounded-lg p-3">
+                <p className="text-gray-400 text-xs uppercase">Inicio</p>
+                <p className="font-bold text-white">{torneo.start_date}</p>
+              </div>
+              <div className="bg-gray-800 rounded-lg p-3">
+                <p className="text-gray-400 text-xs uppercase">Final</p>
+                <p className="font-bold text-white">{torneo.end_date}</p>
+              </div>
+              <div className="bg-gray-800 rounded-lg p-3">
+                <p className="text-gray-400 text-xs uppercase">Premio</p>
+                <p className="font-bold text-yellow-400">{torneo.prize}</p>
+              </div>
+              <div className="bg-gray-800 rounded-lg p-3">
+                <p className="text-gray-400 text-xs uppercase">Estado</p>
+                <span className="bg-yellow-500 text-black px-2 py-1 rounded text-xs font-black uppercase">{torneo.status}</span>
+              </div>
             </div>
             <div className="mt-6 pt-4 border-t border-gray-800 text-center">
               <p className="text-gray-500 text-xs">Presentado por</p>
@@ -305,6 +287,7 @@ export default function Home() {
           <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
         </svg>
       </a>
+
     </main>
   );
 }

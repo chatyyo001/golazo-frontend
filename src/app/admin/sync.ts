@@ -47,8 +47,7 @@ async function getOurMatches(token: string) {
   return data.data || [];
 }
 
-async function updateMatch(token, matchId, homeScore, awayScore, minute, status) {
-  await fetch(GOLAZO_API + '/api/matches/' + matchId + '/score', {
+async function updateMatch(token: string, matchId: string, homeScore: number, awayScore: number, minute: number | null, status: string) {  await fetch(GOLAZO_API + '/api/matches/' + matchId + '/score', {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
     body: JSON.stringify({ home_score: homeScore, away_score: awayScore, minute, status }),

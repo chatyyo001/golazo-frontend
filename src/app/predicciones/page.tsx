@@ -3,6 +3,9 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 const API = 'https://golazo-api-production.up.railway.app';
+const WA_NUMBER = '573057572968';
+const WA_MSG = encodeURIComponent('Hola, quiero información sobre la Polla Empresarial del Mundial 2026 para mi empresa 🏆');
+const WA_LINK = `https://wa.me/${WA_NUMBER}?text=${WA_MSG}`;
 
 const FlagImg = ({ code }: { code: string }) => {
   if (!code || code.length < 2) return <span className="w-8 h-6 bg-gray-700 rounded-sm inline-block" />;
@@ -21,6 +24,42 @@ function PuntosChip({ pts }: { pts: number | null }) {
   if (pts === 3) return <span className="bg-green-600 text-white text-xs font-black px-2 py-1 rounded-full">+3 EXACTO</span>;
   if (pts === 1) return <span className="bg-yellow-600 text-black text-xs font-black px-2 py-1 rounded-full">+1 GANADOR</span>;
   return <span className="bg-gray-800 text-gray-400 text-xs font-black px-2 py-1 rounded-full">0 pts</span>;
+}
+
+function CTAWhatsApp() {
+  return (
+    <div className="mt-8 rounded-2xl overflow-hidden border border-yellow-700 bg-gradient-to-br from-gray-900 to-black">
+      <div className="bg-yellow-500 px-4 py-2 text-center">
+        <p className="text-black font-black text-xs uppercase tracking-widest">🏢 Polla Empresarial</p>
+      </div>
+      <div className="px-5 py-5 text-center space-y-3">
+        <p className="text-white font-black text-lg leading-tight">
+          ¿Quieres esto para tu empresa?
+        </p>
+        <p className="text-gray-400 text-sm">
+          Ranking privado · Usuarios ilimitados · Marca personalizada
+        </p>
+        <div className="flex flex-col gap-2 text-sm text-gray-400">
+          <span>✅ Gestión de partidos en tiempo real</span>
+          <span>✅ Tabla de posiciones automática</span>
+          <span>✅ Puntos calculados al instante</span>
+        </div>
+        <a
+          href={WA_LINK}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center justify-center gap-2 w-full bg-green-500 hover:bg-green-400 text-white font-black py-4 rounded-xl uppercase text-sm transition-colors mt-2"
+        >
+          <svg viewBox="0 0 24 24" className="w-5 h-5 fill-white">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+            <path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.122 1.524 5.855L.057 23.886a.5.5 0 00.614.665l6.218-1.63A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.9a9.878 9.878 0 01-5.031-1.378l-.361-.214-3.741.981.999-3.648-.235-.374A9.861 9.861 0 012.1 12C2.1 6.533 6.533 2.1 12 2.1S21.9 6.533 21.9 12 17.467 21.9 12 21.9z"/>
+          </svg>
+          Contactar por WhatsApp
+        </a>
+        <p className="text-gray-600 text-xs">Te Lo Sugiero Sports · @telosugiero</p>
+      </div>
+    </div>
+  );
 }
 
 export default function Predicciones() {
@@ -73,7 +112,6 @@ export default function Predicciones() {
       });
       setGuardado(matchId);
       setTimeout(() => setGuardado(null), 2000);
-      // Refrescar predicciones
       const headers = { Authorization: 'Bearer ' + token };
       fetch(API + '/api/predictions/me', { headers }).then(r => r.json()).then(d => setMisPredicciones(d || []));
     } finally {
@@ -85,7 +123,6 @@ export default function Predicciones() {
     setPreds(prev => ({ ...prev, [matchId]: { ...prev[matchId], home: prev[matchId]?.home || '', away: prev[matchId]?.away || '', [side]: val } }));
   };
 
-  // Historial: predicciones de partidos terminados
   const historial = misPredicciones.filter(p => p.matches?.status === 'finished');
   const totalPts = historial.reduce((sum, p) => sum + (p.points || 0), 0);
   const exactas = historial.filter(p => p.points === 3).length;
@@ -108,7 +145,7 @@ export default function Predicciones() {
         </div>
       </header>
 
-      {/* Banner usuario */}
+      {/* Banner */}
       <div className="bg-gradient-to-r from-yellow-600 via-yellow-500 to-yellow-600 px-4 py-2 text-center">
         <p className="text-black font-black text-sm uppercase">Hola {user?.name} — Polla Empresarial</p>
       </div>
@@ -153,19 +190,13 @@ export default function Predicciones() {
                       <FlagImg code={p.home_team?.flag} />
                     </div>
                     <div className="flex items-center gap-2">
-                      <input
-                        type="number" min="0" max="20"
-                        value={pred?.home || ''}
+                      <input type="number" min="0" max="20" value={pred?.home || ''}
                         onChange={e => setPred(p.id, 'home', e.target.value)}
-                        className="w-12 h-12 bg-gray-800 border border-gray-700 rounded-lg text-center text-xl font-black text-white focus:outline-none focus:border-yellow-500"
-                      />
+                        className="w-12 h-12 bg-gray-800 border border-gray-700 rounded-lg text-center text-xl font-black text-white focus:outline-none focus:border-yellow-500" />
                       <span className="text-gray-500 font-black">-</span>
-                      <input
-                        type="number" min="0" max="20"
-                        value={pred?.away || ''}
+                      <input type="number" min="0" max="20" value={pred?.away || ''}
                         onChange={e => setPred(p.id, 'away', e.target.value)}
-                        className="w-12 h-12 bg-gray-800 border border-gray-700 rounded-lg text-center text-xl font-black text-white focus:outline-none focus:border-yellow-500"
-                      />
+                        className="w-12 h-12 bg-gray-800 border border-gray-700 rounded-lg text-center text-xl font-black text-white focus:outline-none focus:border-yellow-500" />
                     </div>
                     <div className="flex items-center gap-2 flex-1">
                       <FlagImg code={p.away_team?.flag} />
@@ -173,24 +204,21 @@ export default function Predicciones() {
                     </div>
                   </div>
                   <div className="px-4 pb-4">
-                    <button
-                      onClick={() => guardar(p.id)}
-                      disabled={guardando === p.id}
-                      className={'w-full py-2 rounded-lg text-sm font-black uppercase transition-colors ' + (guardado === p.id ? 'bg-green-600 text-white' : 'bg-yellow-500 hover:bg-yellow-400 text-black')}
-                    >
+                    <button onClick={() => guardar(p.id)} disabled={guardando === p.id}
+                      className={'w-full py-2 rounded-lg text-sm font-black uppercase transition-colors ' + (guardado === p.id ? 'bg-green-600 text-white' : 'bg-yellow-500 hover:bg-yellow-400 text-black')}>
                       {guardado === p.id ? '✓ Guardado!' : guardando === p.id ? 'Guardando...' : yaGuardado ? 'Actualizar prediccion' : 'Guardar prediccion'}
                     </button>
                   </div>
                 </div>
               );
             })}
+            {!loading && <CTAWhatsApp />}
           </>
         )}
 
         {/* ── TAB HISTORIAL ── */}
         {tab === 'historial' && (
           <>
-            {/* Resumen de puntos */}
             {historial.length > 0 && (
               <div className="grid grid-cols-3 gap-3 mb-2">
                 <div className="bg-gray-900 border border-yellow-700 rounded-xl p-3 text-center">
@@ -207,11 +235,9 @@ export default function Predicciones() {
                 </div>
               </div>
             )}
-
             {historial.length === 0 && (
               <p className="text-gray-500 text-center py-10">Aún no hay partidos terminados con tus predicciones.</p>
             )}
-
             {historial.map(p => {
               const m = p.matches;
               return (
@@ -221,7 +247,6 @@ export default function Predicciones() {
                     <span>{formatFecha(m?.match_date)}</span>
                   </div>
                   <div className="px-4 py-3">
-                    {/* Resultado real */}
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2 flex-1 justify-end">
                         <span className="text-sm font-bold">{m?.home_team?.name}</span>
@@ -236,7 +261,6 @@ export default function Predicciones() {
                         <span className="text-sm font-bold">{m?.away_team?.name}</span>
                       </div>
                     </div>
-                    {/* Tu predicción */}
                     <div className="flex items-center justify-between pt-2 border-t border-gray-800">
                       <p className="text-xs text-gray-500 uppercase">Tu predicción: <span className="text-white font-bold">{p.home_score} - {p.away_score}</span></p>
                       <PuntosChip pts={p.points} />
@@ -245,6 +269,7 @@ export default function Predicciones() {
                 </div>
               );
             })}
+            <CTAWhatsApp />
           </>
         )}
       </div>

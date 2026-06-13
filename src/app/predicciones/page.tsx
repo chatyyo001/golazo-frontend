@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 const API = 'https://golazo-api-production.up.railway.app';
+const TOTAL_PARTIDOS = 72;
 const WA_NUMBER = '573057572968';
 const WA_MSG = encodeURIComponent('Hola, quiero información sobre la Polla Empresarial del Mundial 2026 para mi empresa 🏆');
 const WA_LINK = `https://wa.me/${WA_NUMBER}?text=${WA_MSG}`;
@@ -26,6 +27,28 @@ function PuntosChip({ pts }: { pts: number | null }) {
   return <span className="bg-gray-800 text-gray-400 text-xs font-black px-2 py-1 rounded-full">0 pts</span>;
 }
 
+function BarraProgreso({ completadas, total }: { completadas: number; total: number }) {
+  const pct = total > 0 ? Math.round((completadas / total) * 100) : 0;
+  const color = pct === 100 ? 'bg-green-500' : pct >= 50 ? 'bg-yellow-500' : 'bg-yellow-600';
+  return (
+    <div className="bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 mb-4">
+      <div className="flex justify-between items-center mb-2">
+        <p className="text-xs font-black text-gray-400 uppercase tracking-wide">
+          {pct === 100 ? '🎉 ¡Completaste todos los partidos!' : `⚽ Predicciones completadas`}
+        </p>
+        <p className="text-xs font-black text-yellow-400">{completadas} / {total}</p>
+      </div>
+      <div className="w-full bg-gray-800 rounded-full h-3 overflow-hidden">
+        <div
+          className={`h-3 rounded-full transition-all duration-500 ${color}`}
+          style={{ width: `${pct}%` }}
+        />
+      </div>
+      <p className="text-right text-xs text-gray-600 mt-1">{pct}%</p>
+    </div>
+  );
+}
+
 function CTAWhatsApp() {
   return (
     <div className="mt-8 rounded-2xl overflow-hidden border border-yellow-700 bg-gradient-to-br from-gray-900 to-black">
@@ -33,23 +56,15 @@ function CTAWhatsApp() {
         <p className="text-black font-black text-xs uppercase tracking-widest">🏢 Polla Empresarial</p>
       </div>
       <div className="px-5 py-5 text-center space-y-3">
-        <p className="text-white font-black text-lg leading-tight">
-          ¿Quieres esto para tu empresa?
-        </p>
-        <p className="text-gray-400 text-sm">
-          Ranking privado · Usuarios ilimitados · Marca personalizada
-        </p>
+        <p className="text-white font-black text-lg leading-tight">¿Quieres esto para tu empresa?</p>
+        <p className="text-gray-400 text-sm">Ranking privado · Usuarios ilimitados · Marca personalizada</p>
         <div className="flex flex-col gap-2 text-sm text-gray-400">
           <span>✅ Gestión de partidos en tiempo real</span>
           <span>✅ Tabla de posiciones automática</span>
           <span>✅ Puntos calculados al instante</span>
         </div>
-        <a
-          href={WA_LINK}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center justify-center gap-2 w-full bg-green-500 hover:bg-green-400 text-white font-black py-4 rounded-xl uppercase text-sm transition-colors mt-2"
-        >
+        <a href={WA_LINK} target="_blank" rel="noopener noreferrer"
+          className="flex items-center justify-center gap-2 w-full bg-green-500 hover:bg-green-400 text-white font-black py-4 rounded-xl uppercase text-sm transition-colors mt-2">
           <svg viewBox="0 0 24 24" className="w-5 h-5 fill-white">
             <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
             <path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.122 1.524 5.855L.057 23.886a.5.5 0 00.614.665l6.218-1.63A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.9a9.878 9.878 0 01-5.031-1.378l-.361-.214-3.741.981.999-3.648-.235-.374A9.861 9.861 0 012.1 12C2.1 6.533 6.533 2.1 12 2.1S21.9 6.533 21.9 12 17.467 21.9 12 21.9z"/>
@@ -128,6 +143,9 @@ export default function Predicciones() {
   const exactas = historial.filter(p => p.points === 3).length;
   const ganador = historial.filter(p => p.points === 1).length;
 
+  // Predicciones completadas sobre el total del torneo
+  const completadas = misPredicciones.length;
+
   return (
     <main className="min-h-screen bg-black text-white pb-20">
       {/* Header */}
@@ -152,21 +170,22 @@ export default function Predicciones() {
 
       {/* Tabs */}
       <div className="flex border-b border-gray-800 bg-gray-950">
-        <button
-          onClick={() => setTab('predecir')}
-          className={'flex-1 py-3 text-sm font-black uppercase tracking-wide transition-colors ' + (tab === 'predecir' ? 'text-yellow-400 border-b-2 border-yellow-400' : 'text-gray-500')}
-        >
+        <button onClick={() => setTab('predecir')}
+          className={'flex-1 py-3 text-sm font-black uppercase tracking-wide transition-colors ' + (tab === 'predecir' ? 'text-yellow-400 border-b-2 border-yellow-400' : 'text-gray-500')}>
           Predecir
         </button>
-        <button
-          onClick={() => setTab('historial')}
-          className={'flex-1 py-3 text-sm font-black uppercase tracking-wide transition-colors ' + (tab === 'historial' ? 'text-yellow-400 border-b-2 border-yellow-400' : 'text-gray-500')}
-        >
+        <button onClick={() => setTab('historial')}
+          className={'flex-1 py-3 text-sm font-black uppercase tracking-wide transition-colors ' + (tab === 'historial' ? 'text-yellow-400 border-b-2 border-yellow-400' : 'text-gray-500')}>
           Mis Resultados {historial.length > 0 && <span className="ml-1 text-xs bg-yellow-500 text-black px-1.5 py-0.5 rounded-full">{historial.length}</span>}
         </button>
       </div>
 
       <div className="max-w-2xl mx-auto px-4 py-6 space-y-4">
+
+        {/* Barra de progreso — siempre visible en ambos tabs */}
+        {!loading && (
+          <BarraProgreso completadas={completadas} total={TOTAL_PARTIDOS} />
+        )}
 
         {/* ── TAB PREDECIR ── */}
         {tab === 'predecir' && (

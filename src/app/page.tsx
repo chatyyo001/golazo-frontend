@@ -228,7 +228,10 @@ function EquiposTab({ equipos }: { equipos: any[] }) {
                   <p className="px-4 py-2 text-yellow-600 text-xs font-black uppercase tracking-widest bg-gray-950">{group}</p>
                   {posByGroup[group].map((p: any) => (
                     <div key={p.id} className="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-800 transition-colors">
-                      <span className="text-gray-600 text-xs font-bold w-6 text-right">{p.number}</span>
+                     <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-black flex-shrink-0" style={{ background: p.name.charCodeAt(0) % 2 === 0 ? '#78350f' : '#1e3a5f', color: '#FCD116' }}>
+  {p.name.split(' ').map((n: string) => n[0]).slice(0,2).join('')}
+</div>
+<span className="text-gray-600 text-xs font-bold w-6 text-right">{p.number}</span>
                       <span className="bg-gray-800 text-yellow-400 text-xs font-black px-1.5 py-0.5 rounded w-10 text-center">{p.position}</span>
                       <span className="text-white text-sm font-bold flex-1">{p.name}</span>
                       <span className="text-gray-500 text-xs">{p.club}</span>

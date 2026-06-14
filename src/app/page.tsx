@@ -9,6 +9,12 @@ const FlagImg = ({ code }: { code: string }) => {
   return <img src={'https://flagcdn.com/32x24/' + code.toLowerCase() + '.png'} alt={code} width={32} height={24} className="rounded-sm" />;
 };
 
+const FlagLg = ({ code }: { code: string }) => {
+  if (!code || code.length < 2) return <span className="w-16 h-12 bg-gray-700 rounded inline-block" />;
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img src={'https://flagcdn.com/64x48/' + code.toLowerCase() + '.png'} alt={code} width={64} height={48} className="rounded drop-shadow-lg" />;
+};
+
 const WA_DEMO = 'https://wa.me/573057572968?text=Hola!%20Quiero%20una%20demo%20de%20la%20Polla%20Empresarial%20Mundial%202026';
 const WA_GENERAL = 'https://wa.me/573057572968?text=Hola!%20Vi%20la%20app%20del%20Mundial%202026';
 
@@ -18,11 +24,113 @@ const formatFecha = (dateStr: string) => {
   return d.toLocaleDateString('es-CO', { day: '2-digit', month: 'short' }) + ' ' + d.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' });
 };
 
-const CLASIFICACION_COLOR: Record<string, string> = {
-  qualify: 'bg-green-700',
-  third: 'bg-yellow-700',
-  eliminated: 'bg-transparent',
-};
+// ─── PARTIDO DESTACADO COLOMBIA ───────────────────────────────────────────────
+
+function PartidoColombiaHero({ partidos }: { partidos: any[] }) {
+  const col = partidos.find(p =>
+    p.home_team?.name?.toLowerCase().includes('colombia') ||
+    p.away_team?.name?.toLowerCase().includes('colombia')
+  );
+  if (!col) return null;
+
+  const esCasa = col.home_team?.name?.toLowerCase().includes('colombia');
+  const rivalTeam = esCasa ? col.away_team : col.home_team;
+  const colTeam = esCasa ? col.home_team : col.away_team;
+  const colScore = esCasa ? col.home_score : col.away_score;
+  const rivScore = esCasa ? col.away_score : col.home_score;
+
+  const isLive = col.status === 'live';
+  const isFinished = col.status === 'finished';
+
+  return (
+    <div className="mb-6 rounded-2xl overflow-hidden border border-yellow-700 shadow-2xl shadow-yellow-900/30"
+      style={{ background: 'linear-gradient(135deg, #1a1200 0%, #0a0a0a 50%, #001a0a 100%)' }}>
+      {/* Badge superior */}
+      <div className="flex items-center justify-between px-4 py-2 border-b border-yellow-900/40">
+        <div className="flex items-center gap-2">
+          <span className="text-yellow-400 text-xs">🇨🇴</span>
+          <span className="text-yellow-400 font-black text-xs uppercase tracking-widest">Partido Colombia</span>
+        </div>
+        {isLive && (
+          <span className="bg-red-600 text-white text-xs font-black px-2 py-0.5 rounded-full animate-pulse">
+            ⚡ EN VIVO {col.minute}&apos;
+          </span>
+        )}
+        {isFinished && (
+          <span className="bg-gray-700 text-gray-300 text-xs font-bold px-2 py-0.5 rounded-full">
+            ✓ Final
+          </span>
+        )}
+        {!isLive && !isFinished && (
+          <span className="text-yellow-600 text-xs font-bold">{formatFecha(col.match_date)}</span>
+        )}
+      </div>
+
+      {/* Contenido principal */}
+      <div className="px-6 py-5 flex items-center justify-between gap-4">
+        {/* Colombia */}
+        <div className="flex flex-col items-center gap-2 flex-1">
+          <FlagLg code={colTeam?.flag} />
+          <span className="text-white font-black text-sm text-center">Colombia</span>
+        </div>
+
+        {/* Marcador / VS */}
+        <div className="text-center flex-shrink-0">
+          {isFinished || isLive ? (
+            <div>
+              <div className="text-4xl font-black text-white tracking-wider">
+                {colScore ?? 0} <span className="text-yellow-500">–</span> {rivScore ?? 0}
+              </div>
+              {isLive && <div className="text-red-400 text-xs font-bold mt-1">En curso</div>}
+            </div>
+          ) : (
+            <div>
+              <div className="text-yellow-500 font-black text-2xl">VS</div>
+              <div className="text-gray-400 text-xs mt-1">Grupo {col.groups?.name}</div>
+            </div>
+          )}
+        </div>
+
+        {/* Rival */}
+        <div className="flex flex-col items-center gap-2 flex-1">
+          <FlagLg code={rivalTeam?.flag} />
+          <span className="text-white font-black text-sm text-center">{rivalTeam?.short_name || rivalTeam?.name}</span>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div className="px-4 py-2 border-t border-yellow-900/30 flex justify-between text-xs text-gray-600">
+        <span>Grupo {col.groups?.name}</span>
+        <span>{col.stadium}</span>
+      </div>
+    </div>
+  );
+}
+
+// ─── CTA POLLA EMPRESARIAL ────────────────────────────────────────────────────
+
+function CTAEmpresarial() {
+  return (
+    <a href={WA_DEMO} target="_blank" rel="noopener noreferrer"
+      className="block mb-6 rounded-xl overflow-hidden border border-yellow-600 hover:border-yellow-400 transition-all hover:scale-[1.01]"
+      style={{ background: 'linear-gradient(90deg, #78350f 0%, #1c1c1c 100%)' }}>
+      <div className="flex items-center justify-between px-4 py-3 gap-3">
+        <div className="flex items-center gap-3">
+          <span className="text-2xl">🏆</span>
+          <div>
+            <p className="text-yellow-400 font-black text-sm uppercase leading-none">Polla Empresarial</p>
+            <p className="text-gray-400 text-xs mt-0.5">Tu empresa en el Mundial · Pide tu demo</p>
+          </div>
+        </div>
+        <div className="bg-green-500 text-white text-xs font-black px-3 py-2 rounded-lg whitespace-nowrap flex-shrink-0">
+          WhatsApp →
+        </div>
+      </div>
+    </a>
+  );
+}
+
+// ─── MAIN ─────────────────────────────────────────────────────────────────────
 
 export default function Home() {
   const [torneo, setTorneo] = useState<any>(null);
@@ -88,34 +196,38 @@ export default function Home() {
       <div className="max-w-3xl mx-auto px-4 py-6">
 
         {tab === 'partidos' && (
-          <div className="space-y-3">
-            {partidos.length === 0 && <p className="text-gray-500 text-center py-10">No hay partidos programados.</p>}
-            {partidos.map(p => (
-              <div key={p.id} className="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden hover:border-yellow-800 transition-colors">
-                <div className="flex items-center px-4 py-3 gap-3">
-                  <FlagImg code={p.home_team?.flag} />
-                  <span className="text-sm font-bold text-right flex-1">{p.home_team?.name}</span>
-                  <div className={'px-4 py-2 rounded-lg text-center min-w-16 ' + (p.status === 'live' ? 'bg-red-600' : 'bg-gray-800')}>
-                    {p.status === 'finished' && <span className="font-black text-lg text-white">{p.home_score} - {p.away_score}</span>}
-                    {p.status === 'live' && <span className="font-black text-white text-xs">VIVO {p.minute}'</span>}
-                    {p.status === 'scheduled' && <span className="text-yellow-400 text-xs font-bold">VS</span>}
+          <div>
+            <PartidoColombiaHero partidos={partidos} />
+            <CTAEmpresarial />
+            <div className="space-y-3">
+              {partidos.length === 0 && <p className="text-gray-500 text-center py-10">No hay partidos programados.</p>}
+              {partidos.map(p => (
+                <div key={p.id} className="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden hover:border-yellow-800 transition-colors">
+                  <div className="flex items-center px-4 py-3 gap-3">
+                    <FlagImg code={p.home_team?.flag} />
+                    <span className="text-sm font-bold text-right flex-1">{p.home_team?.name}</span>
+                    <div className={'px-4 py-2 rounded-lg text-center min-w-16 ' + (p.status === 'live' ? 'bg-red-600' : 'bg-gray-800')}>
+                      {p.status === 'finished' && <span className="font-black text-lg text-white">{p.home_score} - {p.away_score}</span>}
+                      {p.status === 'live' && <span className="font-black text-white text-xs">VIVO {p.minute}&apos;</span>}
+                      {p.status === 'scheduled' && <span className="text-yellow-400 text-xs font-bold">VS</span>}
+                    </div>
+                    <span className="text-sm font-bold flex-1">{p.away_team?.name}</span>
+                    <FlagImg code={p.away_team?.flag} />
                   </div>
-                  <span className="text-sm font-bold flex-1">{p.away_team?.name}</span>
-                  <FlagImg code={p.away_team?.flag} />
+                  <div className="flex justify-between px-4 py-2 bg-gray-950 text-xs text-gray-500 border-t border-gray-800">
+                    <span className="text-yellow-700 font-bold">Grupo {p.groups?.name}</span>
+                    <span className="text-gray-600">{p.stadium}</span>
+                    <span>{formatFecha(p.match_date)}</span>
+                  </div>
                 </div>
-                <div className="flex justify-between px-4 py-2 bg-gray-950 text-xs text-gray-500 border-t border-gray-800">
-                  <span className="text-yellow-700 font-bold">Grupo {p.groups?.name}</span>
-                  <span className="text-gray-600">{p.stadium}</span>
-                  <span>{formatFecha(p.match_date)}</span>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         )}
 
         {tab === 'posiciones' && (
           <div className="space-y-4">
-            {/* Selector de grupo */}
+            <CTAEmpresarial />
             <div className="flex gap-1 flex-wrap">
               {grupos.map(g => (
                 <button key={g} onClick={() => setGrupoActivo(g)}
@@ -126,7 +238,6 @@ export default function Home() {
               ))}
             </div>
 
-            {/* Tabla del grupo activo */}
             {grupoActualData ? (
               <div className="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden">
                 <div className="px-4 py-3 bg-gray-950 border-b border-gray-800 flex items-center gap-2">
@@ -135,8 +246,6 @@ export default function Home() {
                     <span className="text-gray-500 text-xs">· {grupoActualData.group.host_city}</span>
                   )}
                 </div>
-
-                {/* Header tabla */}
                 <div className="grid grid-cols-[2rem_1fr_2rem_2rem_2rem_2rem_2rem_2.5rem] gap-1 px-3 py-2 text-xs text-gray-500 font-bold uppercase border-b border-gray-800">
                   <span className="text-center">#</span>
                   <span>Equipo</span>
@@ -147,8 +256,6 @@ export default function Home() {
                   <span className="text-center">DG</span>
                   <span className="text-center text-yellow-400">PTS</span>
                 </div>
-
-                {/* Filas */}
                 {grupoActualData.rows.map((row: any, i: number) => (
                   <div key={row.team.id}
                     className={'grid grid-cols-[2rem_1fr_2rem_2rem_2rem_2rem_2rem_2.5rem] gap-1 px-3 py-3 items-center text-sm border-b border-gray-800 last:border-0 ' +
@@ -176,8 +283,6 @@ export default function Home() {
                     <span className="text-center font-black text-yellow-400">{row.pts}</span>
                   </div>
                 ))}
-
-                {/* Leyenda */}
                 <div className="px-3 py-2 flex gap-4 text-xs text-gray-600 border-t border-gray-800">
                   <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-green-700 inline-block" /> Clasifican</span>
                   <span className="text-gray-700">PJ=Jugados PG=Ganados PE=Empatados PP=Perdidos DG=Diferencia PTS=Puntos</span>

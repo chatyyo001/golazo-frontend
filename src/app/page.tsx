@@ -331,8 +331,13 @@ export default function Home() {
             <div className="space-y-3">
               {partidos.length === 0 && <p className="text-gray-500 text-center py-10">No hay partidos programados.</p>}
               {partidos.map(p => (
-                <div key={p.id} className="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden hover:border-yellow-800 transition-colors">
-                  <div className="flex items-center px-4 py-3 gap-3">
+               <div key={p.id} className="relative bg-gray-900 rounded-xl border border-gray-800 overflow-hidden hover:border-yellow-800 transition-colors">
+                 {predicciones[p.id] && (
+  <div className="absolute top-2 right-2 z-10 bg-yellow-900/40 border border-yellow-600 text-yellow-400 text-xs font-black px-2 py-0.5 rounded-full flex items-center gap-1">
+    ✅ Pronosticado
+  </div>
+)}
+                 <div className="flex items-center px-4 py-3 gap-3">
                     <FlagImg code={p.home_team?.flag} />
                     <span className="text-sm font-bold text-right flex-1">{p.home_team?.name}</span>
                     <div className={'px-4 py-2 rounded-lg text-center min-w-16 ' + (p.status === 'live' ? 'bg-red-600' : 'bg-gray-800')}>

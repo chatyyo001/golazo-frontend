@@ -281,6 +281,16 @@ const [predicciones, setPredicciones] = useState<Record<string,boolean>>({});
     });
     fetch(API + '/api/teams').then(r => r.json()).then(d => setEquipos(d.data || d));
     fetch(API + '/api/matches').then(r => r.json()).then(d => setPartidos(d.data || []));
+    const token = localStorage.getItem('token');
+if (token) {
+  fetch(API + '/api/predictions/me', { headers: { Authorization: 'Bearer ' + token } })
+    .then(r => r.json())
+    .then(data => {
+      const map: Record<string,boolean> = {};
+      (data || []).forEach((p: any) => { map[p.match_id] = true; });
+      setPredicciones(map);
+    });
+}
   }, []);
 
   const grupoActualData = posiciones.find(g => g.group?.name === grupoActivo);

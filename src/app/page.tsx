@@ -268,7 +268,7 @@ export default function Home() {
   const [posiciones, setPosiciones] = useState<any[]>([]);
   const [grupoActivo, setGrupoActivo] = useState<string>('A');
   const [tab, setTab] = useState('partidos');
-
+const [predicciones, setPredicciones] = useState<Record<string,boolean>>({});
   useEffect(() => {
     fetch(API + '/api/tournaments').then(r => r.json()).then(d => {
       const t = d.data[0];

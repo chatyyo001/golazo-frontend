@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { getAnalisis } from './analisis';
 
 const API = 'https://golazo-api-production.up.railway.app';
 
@@ -24,6 +25,44 @@ const formatFecha = (dateStr: string) => {
   return d.toLocaleDateString('es-CO', { day: '2-digit', month: 'short' }) + ' ' + d.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' });
 };
 
+// ─── ANÁLISIS IA ──────────────────────────────────────────────────────────────
+
+function AnalisisIA({ homeTeam, awayTeam }: { homeTeam: any; awayTeam: any }) {
+  const [open, setOpen] = useState(false);
+  const analisis = getAnalisis(homeTeam?.name || '', awayTeam?.name || '');
+  if (!analisis) return null;
+
+  return (
+    <div className="mt-2 border-t border-gray-800">
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between px-4 py-2 text-xs font-bold text-yellow-400 hover:bg-gray-800 transition-colors"
+      >
+        <span>⚡ Análisis IA · Te Lo Sugiero Sports</span>
+        <span>{open ? '▲' : '▼'}</span>
+      </button>
+      {open && (
+        <div className="px-4 pb-4 space-y-3">
+          <p className="text-gray-300 text-sm leading-relaxed">{analisis.prediccion}</p>
+          <div className="space-y-1">
+            <p className="text-yellow-400 text-xs font-black uppercase">Claves del partido</p>
+            {analisis.claves.map((c, i) => (
+              <div key={i} className="flex gap-2 text-xs text-gray-400">
+                <span className="text-yellow-600 flex-shrink-0">→</span>
+                <span>{c}</span>
+              </div>
+            ))}
+          </div>
+          <div className="bg-yellow-900/30 border border-yellow-700 rounded-lg px-3 py-2">
+            <p className="text-yellow-400 text-xs font-black uppercase mb-1">Veredicto</p>
+            <p className="text-white text-sm font-bold">{analisis.veredicto}</p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── PARTIDO DESTACADO COLOMBIA ───────────────────────────────────────────────
 
 function PartidoColombiaHero({ partidos }: { partidos: any[] }) {
@@ -45,7 +84,6 @@ function PartidoColombiaHero({ partidos }: { partidos: any[] }) {
   return (
     <div className="mb-6 rounded-2xl overflow-hidden border border-yellow-700 shadow-2xl shadow-yellow-900/30"
       style={{ background: 'linear-gradient(135deg, #1a1200 0%, #0a0a0a 50%, #001a0a 100%)' }}>
-      {/* Badge superior */}
       <div className="flex items-center justify-between px-4 py-2 border-b border-yellow-900/40">
         <div className="flex items-center gap-2">
           <span className="text-yellow-400 text-xs">🇨🇴</span>
@@ -66,15 +104,11 @@ function PartidoColombiaHero({ partidos }: { partidos: any[] }) {
         )}
       </div>
 
-      {/* Contenido principal */}
       <div className="px-6 py-5 flex items-center justify-between gap-4">
-        {/* Colombia */}
         <div className="flex flex-col items-center gap-2 flex-1">
           <FlagLg code={colTeam?.flag} />
           <span className="text-white font-black text-sm text-center">Colombia</span>
         </div>
-
-        {/* Marcador / VS */}
         <div className="text-center flex-shrink-0">
           {isFinished || isLive ? (
             <div>
@@ -90,15 +124,14 @@ function PartidoColombiaHero({ partidos }: { partidos: any[] }) {
             </div>
           )}
         </div>
-
-        {/* Rival */}
         <div className="flex flex-col items-center gap-2 flex-1">
           <FlagLg code={rivalTeam?.flag} />
           <span className="text-white font-black text-sm text-center">{rivalTeam?.short_name || rivalTeam?.name}</span>
         </div>
       </div>
 
-      {/* Footer */}
+      <AnalisisIA homeTeam={col.home_team} awayTeam={col.away_team} />
+
       <div className="px-4 py-2 border-t border-yellow-900/30 flex justify-between text-xs text-gray-600">
         <span>Grupo {col.groups?.name}</span>
         <span>{col.stadium}</span>
@@ -219,6 +252,7 @@ export default function Home() {
                     <span className="text-gray-600">{p.stadium}</span>
                     <span>{formatFecha(p.match_date)}</span>
                   </div>
+                  <AnalisisIA homeTeam={p.home_team} awayTeam={p.away_team} />
                 </div>
               ))}
             </div>

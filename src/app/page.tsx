@@ -162,7 +162,100 @@ function CTAEmpresarial() {
     </a>
   );
 }
+const SQUAD_TEAMS = ['Colombia','Brasil','Argentina','España','Francia','Portugal','Inglaterra','Alemania'];
+const POS_ORDER: Record<string,number> = {GK:1,CB:2,RB:3,LB:4,CDM:5,CM:6,CAM:7,RM:8,LM:9,RW:10,LW:11,ST:12};
 
+function EquiposTab({ equipos }: { equipos: any[] }) {
+  const [selectedTeam, setSelectedTeam] = useState<any>(null);
+  const [squad, setSquad] = useState<any[]>([]);
+  const [loadingSquad, setLoadingSquad] = useState(false);
+
+  const squadTeams = equipos.filter(e => SQUAD_TEAMS.includes(e.name));
+  const otherTeams = equipos.filter(e => !e.is_placeholder && !SQUAD_TEAMS.includes(e.name));
+
+  const loadSquad = async (team: any) => {
+    if (selectedTeam?.id === team.id) { setSelectedTeam(null); setSquad([]); return; }
+    setSelectedTeam(team);
+    setLoadingSquad(true);
+    const res = await fetch(API + '/api/teams/' + team.id + '/squad');
+    const data = await res.json();
+    setSquad(data.sort((a: any, b: any) => (POS_ORDER[a.position]||99) - (POS_ORDER[b.position]||99)));
+    setLoadingSquad(false);
+  };
+
+  const posByGroup: Record<string, any[]> = {};
+  squad.forEach(p => {
+    const g = p.position === 'GK' ? 'Porteros'
+      : ['CB','RB','LB'].includes(p.position) ? 'Defensas'
+      : ['CDM','CM','CAM','RM','LM'].includes(p.position) ? 'Mediocampistas'
+      : 'Delanteros';
+    if (!posByGroup[g]) posByGroup[g] = [];
+    posByGroup[g].push(p);
+  });
+
+  return (
+    <div className="space-y-4">
+      <p className="text-yellow-400 text-xs font-black uppercase tracking-widest">Equipos con squad completo</p>
+      <div className="grid grid-cols-2 gap-2">
+        {squadTeams.map(e => (
+          <button key={e.id} onClick={() => loadSquad(e)}
+            className={'rounded-lg p-3 flex items-center gap-3 border transition-colors w-full text-left ' +
+              (selectedTeam?.id === e.id ? 'bg-yellow-900/30 border-yellow-500' : 'bg-gray-900 border-gray-800 hover:border-yellow-700')}>
+            <FlagImg code={e.flag} />
+            <div>
+              <p className="font-bold text-sm text-white">{e.name}</p>
+              <p className="text-gray-500 text-xs">{e.short_name} · {e.confederation}</p>
+            </div>
+          </button>
+        ))}
+      </div>
+
+      {selectedTeam && (
+        <div className="bg-gray-900 rounded-xl border border-yellow-800 overflow-hidden">
+          <div className="flex items-center gap-3 px-4 py-3 bg-gray-950 border-b border-gray-800">
+            <FlagLg code={selectedTeam.flag} />
+            <div>
+              <p className="font-black text-white text-lg">{selectedTeam.name}</p>
+              <p className="text-gray-500 text-xs">{selectedTeam.confederation}</p>
+            </div>
+          </div>
+          {loadingSquad ? (
+            <p className="text-gray-500 text-center py-8">Cargando squad...</p>
+          ) : (
+            <div className="divide-y divide-gray-800">
+              {['Porteros','Defensas','Mediocampistas','Delanteros'].map(group => posByGroup[group] && (
+                <div key={group}>
+                  <p className="px-4 py-2 text-yellow-600 text-xs font-black uppercase tracking-widest bg-gray-950">{group}</p>
+                  {posByGroup[group].map((p: any) => (
+                    <div key={p.id} className="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-800 transition-colors">
+                      <span className="text-gray-600 text-xs font-bold w-6 text-right">{p.number}</span>
+                      <span className="bg-gray-800 text-yellow-400 text-xs font-black px-1.5 py-0.5 rounded w-10 text-center">{p.position}</span>
+                      <span className="text-white text-sm font-bold flex-1">{p.name}</span>
+                      <span className="text-gray-500 text-xs">{p.club}</span>
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      <p className="text-gray-600 text-xs font-black uppercase tracking-widest pt-2">Todos los equipos</p>
+      <div className="grid grid-cols-2 gap-2">
+        {otherTeams.map(e => (
+          <div key={e.id} className="bg-gray-900 rounded-lg p-3 flex items-center gap-3 border border-gray-800">
+            <FlagImg code={e.flag} />
+            <div>
+              <p className="font-bold text-sm text-white">{e.name}</p>
+              <p className="text-gray-500 text-xs">{e.short_name} · {e.confederation}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 // ─── MAIN ─────────────────────────────────────────────────────────────────────
 
 export default function Home() {
@@ -329,18 +422,8 @@ export default function Home() {
         )}
 
         {tab === 'equipos' && (
-          <div className="grid grid-cols-2 gap-2">
-            {equipos.filter(e => !e.is_placeholder).map(e => (
-              <div key={e.id} className="bg-gray-900 rounded-lg p-3 flex items-center gap-3 border border-gray-800 hover:border-yellow-700 transition-colors">
-                <FlagImg code={e.flag} />
-                <div>
-                  <p className="font-bold text-sm">{e.name}</p>
-                  <p className="text-gray-500 text-xs">{e.short_name} · {e.confederation}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+  <EquiposTab equipos={equipos} />
+)}
 
         {tab === 'polla' && (
           <div className="space-y-6">

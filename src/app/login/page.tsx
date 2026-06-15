@@ -24,7 +24,7 @@ export default function Login() {
       if (!res.ok) { setError(data.error || 'Error al iniciar sesión'); return; }
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
-      router.push('/predicciones');
+     router.push('/');
     } catch {
       setError('Error de conexión');
     } finally {

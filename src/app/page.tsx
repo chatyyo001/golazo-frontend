@@ -269,6 +269,7 @@ export default function Home() {
   const [grupoActivo, setGrupoActivo] = useState<string>('A');
   const [tab, setTab] = useState('partidos');
 const [predicciones, setPredicciones] = useState<Record<string,boolean>>({});
+  const [lineupMatch, setLineupMatch] = useState<any>(null);
   useEffect(() => {
     fetch(API + '/api/tournaments').then(r => r.json()).then(d => {
       const t = d.data[0];
@@ -363,7 +364,14 @@ if (token) {
                     <span className="text-gray-600">{p.stadium}</span>
                     <span>{formatFecha(p.match_date)}</span>
                   </div>
-                  <AnalisisIA homeTeam={p.home_team} awayTeam={p.away_team} />
+                  <AnalisisIA homeTeam={p.home_team} awayTeam={p.away_team} /> 
+                 {SQUAD_TEAMS.includes(p.home_team?.name) || SQUAD_TEAMS.includes(p.away_team?.name) ? (
+  <button
+    onClick={() => setLineupMatch(p)}
+    className="w-full px-4 py-2 text-xs font-black text-yellow-400 border-t border-gray-800 hover:bg-gray-800 transition-colors flex items-center justify-center gap-2">
+    ⚽ Armar XI Titular
+  </button>
+) : null}
                 </div>
               ))}
             </div>

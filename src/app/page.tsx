@@ -162,6 +162,152 @@ function CTAEmpresarial() {
     </a>
   );
 }
+// ─── LINEUP MODAL ─────────────────────────────────────────────────────────────
+
+const FORMATIONS: Record<string, string[][]> = {
+  '4-3-3': [['ST','ST','ST'],['CM','CDM','CM'],['LB','CB','CB','RB'],['GK']],
+  '4-2-3-1': [['ST'],['LW','CAM','RW'],['CDM','CDM'],['LB','CB','CB','RB'],['GK']],
+  '3-5-2': [['ST','ST'],['LW','CM','CDM','CM','RW'],['CB','CB','CB'],['GK']],
+}
+
+function LineupModal({ match, onClose }: { match: any; onClose: () => void }) {
+  const [formation, setFormation] = useState('4-3-3');
+  const [squad, setSquad] = useState<any[]>([]);
+  const [lineup, setLineup] = useState<Record<string, any>>({});
+  const [dragging, setDragging] = useState<any>(null);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+
+  const teamId = match.home_team?.id;
+  const teamName = match.home_team?.name;
+
+  useEffect(() => {
+    fetch(API + '/api/teams/' + teamId + '/squad')
+      .then(r => r.json())
+      .then(d => setSquad(d));
+  }, [teamId]);
+
+  const rows = FORMATIONS[formation];
+  const usedIds = new Set(Object.values(lineup).map((p: any) => p?.id).filter(Boolean));
+  const available = squad.filter(p => !usedIds.has(p.id));
+
+  const handleDrop = (slotKey: string) => {
+    if (!dragging) return;
+    setLineup(prev => ({ ...prev, [slotKey]: dragging }));
+    setDragging(null);
+  };
+
+  const removeFromSlot = (slotKey: string) => {
+    setLineup(prev => { const n = { ...prev }; delete n[slotKey]; return n; });
+  };
+
+  const handleSave = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+    setSaving(true);
+    await fetch(API + '/api/lineup-picks', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+      body: JSON.stringify({ match_id: match.id, team_id: teamId, formation, players: lineup })
+    });
+    setSaving(false);
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/80" onClick={onClose}>
+      <div className="bg-gray-950 w-full max-w-lg rounded-t-2xl border-t border-yellow-700 max-h-[90vh] overflow-y-auto"
+        onClick={e => e.stopPropagation()}>
+        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-800">
+          <div>
+            <p className="text-yellow-400 font-black text-sm uppercase">Armar XI Titular</p>
+            <p className="text-gray-500 text-xs">{teamName} · {match.home_team?.name} vs {match.away_team?.name}</p>
+          </div>
+          <button onClick={onClose} className="text-gray-500 hover:text-white text-xl">✕</button>
+        </div>
+
+        <div className="flex gap-2 px-4 py-2 border-b border-gray-800">
+          {Object.keys(FORMATIONS).map(f => (
+            <button key={f} onClick={() => setFormation(f)}
+              className={'px-3 py-1 rounded text-xs font-black ' + (formation === f ? 'bg-yellow-500 text-black' : 'bg-gray-800 text-gray-400')}>
+              {f}
+            </button>
+          ))}
+        </div>
+
+        {/* CANCHA */}
+        <div className="relative mx-4 my-3 rounded-xl overflow-hidden"
+          style={{ background: 'repeating-linear-gradient(180deg, #1a3a1a 0px, #1a3a1a 40px, #163216 40px, #163216 80px)', minHeight: '320px' }}>
+          <div className="absolute inset-0 opacity-10">
+            <svg viewBox="0 0 300 400" className="w-full h-full">
+              <rect x="10" y="10" width="280" height="380" fill="none" stroke="white" strokeWidth="2"/>
+              <line x1="10" y1="200" x2="290" y2="200" stroke="white" strokeWidth="1"/>
+              <circle cx="150" cy="200" r="40" fill="none" stroke="white" strokeWidth="1"/>
+              <rect x="80" y="10" width="140" height="60" fill="none" stroke="white" strokeWidth="1"/>
+              <rect x="80" y="330" width="140" height="60" fill="none" stroke="white" strokeWidth="1"/>
+            </svg>
+          </div>
+          <div className="relative z-10 py-3 space-y-2">
+            {rows.map((row, ri) => (
+              <div key={ri} className="flex justify-center gap-2">
+                {row.map((pos, pi) => {
+                  const key = `${ri}-${pi}`;
+                  const player = lineup[key];
+                  return (
+                    <div key={key}
+                      onDragOver={e => e.preventDefault()}
+                      onDrop={() => handleDrop(key)}
+                      onClick={() => player && removeFromSlot(key)}
+                      className={'w-16 h-16 rounded-lg border-2 flex flex-col items-center justify-center cursor-pointer transition-all ' +
+                        (player ? 'border-yellow-500 bg-yellow-900/40' : 'border-gray-600 bg-black/30 border-dashed hover:border-yellow-600')}>
+                      {player ? (
+                        <>
+                          <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-black"
+                            style={{ background: '#78350f', color: '#FCD116' }}>
+                            {player.name.split(' ').map((n: string) => n[0]).slice(0,2).join('')}
+                          </div>
+                          <p className="text-white text-xs font-bold mt-0.5 truncate w-14 text-center">{player.short_name}</p>
+                        </>
+                      ) : (
+                        <p className="text-gray-500 text-xs font-bold">{pos}</p>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* JUGADORES DISPONIBLES */}
+        <div className="px-4 pb-2">
+          <p className="text-gray-500 text-xs font-black uppercase mb-2">Arrastra jugadores a la cancha</p>
+          <div className="grid grid-cols-3 gap-1 max-h-40 overflow-y-auto">
+            {available.map(p => (
+              <div key={p.id} draggable
+                onDragStart={() => setDragging(p)}
+                onDragEnd={() => setDragging(null)}
+                className={'flex items-center gap-1 bg-gray-800 rounded px-2 py-1.5 cursor-grab active:cursor-grabbing border ' +
+                  (dragging?.id === p.id ? 'border-yellow-500 opacity-50' : 'border-gray-700')}>
+                <span className="text-yellow-600 text-xs font-black w-4">{p.number}</span>
+                <span className="text-white text-xs truncate">{p.short_name}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="px-4 pb-4">
+          <button onClick={handleSave} disabled={saving}
+            className={'w-full py-3 rounded-xl font-black text-sm uppercase transition-colors ' +
+              (saved ? 'bg-green-600 text-white' : 'bg-yellow-500 text-black hover:bg-yellow-400')}>
+            {saved ? '✅ Guardado' : saving ? 'Guardando...' : 'Guardar Alineación'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 const SQUAD_TEAMS = ['Colombia','Brasil','Argentina','España','Francia','Portugal','Inglaterra','Alemania'];
 const POS_ORDER: Record<string,number> = {GK:1,CB:2,RB:3,LB:4,CDM:5,CM:6,CAM:7,RM:8,LM:9,RW:10,LW:11,ST:12};
 
@@ -524,7 +670,7 @@ if (token) {
         )}
 
       </div>
-
+{lineupMatch && <LineupModal match={lineupMatch} onClose={() => setLineupMatch(null)} />}
       <footer className="border-t border-gray-800 py-4 text-center mt-8">
         <p className="text-yellow-600 font-black text-sm uppercase tracking-widest">Te Lo Sugiero Sports</p>
         <p className="text-gray-600 text-xs mt-1">Copa Mundial FIFA 2026</p>

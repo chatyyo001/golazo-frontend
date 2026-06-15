@@ -513,7 +513,7 @@ if (token) {
                   <AnalisisIA homeTeam={p.home_team} awayTeam={p.away_team} /> 
                  {SQUAD_TEAMS.includes(p.home_team?.name) || SQUAD_TEAMS.includes(p.away_team?.name) ? (
   <button
-    onClick={(e) => { e.stopPropagation(); setLineupMatch(p); console.log('clicked', p.id); }}
+    onClick={(e) => { e.stopPropagation(); setLineupMatch(p); }}
     className="w-full px-4 py-2 text-xs font-black text-yellow-400 border-t border-gray-800 hover:bg-gray-800 transition-colors flex items-center justify-center gap-2">
     ⚽ Armar XI Titular
   </button>

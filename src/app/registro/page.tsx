@@ -20,7 +20,7 @@ export default function Registro() {
       const res = await fetch(API + '/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, name: name + (empresa ? ' (' + empresa + ')' : ''), password }),
+        body: JSON.stringify({ email, name, password, company_code: empresa }),
       });
       const data = await res.json();
       if (!res.ok) { setError(data.error || 'Error al registrarse'); return; }
@@ -63,14 +63,15 @@ export default function Registro() {
               />
             </div>
             <div>
-              <label className="text-gray-400 text-xs uppercase tracking-wide block mb-1">Empresa</label>
+              <label className="text-gray-400 text-xs uppercase tracking-wide block mb-1">Código de empresa (opcional)</label>
               <input
                 type="text"
                 value={empresa}
-                onChange={e => setEmpresa(e.target.value)}
+                onChange={e => setEmpresa(e.target.value.toUpperCase())}
                 className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-yellow-500"
-                placeholder="Nombre de tu empresa"
+                placeholder="Ej: ACME2026"
               />
+              <p className="text-gray-600 text-xs mt-1">Pídelo a tu empresa si participas en una Polla Empresarial</p>
             </div>
             <div>
               <label className="text-gray-400 text-xs uppercase tracking-wide block mb-1">Email</label>

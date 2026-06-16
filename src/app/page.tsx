@@ -482,6 +482,9 @@ if (token) {
       <div className="max-w-3xl mx-auto px-4 py-6">
 
         {tab === 'partidos' && (
+  <div style={{ backgroundImage: 'url(/estadio.jpg)', backgroundSize: 'cover', backgroundPosition: 'center top', backgroundAttachment: 'fixed' }} className="relative">
+    <div className="absolute inset-0 bg-black/70 pointer-events-none" />
+    <div className="relative z-10">
           <div>
             <PartidoColombiaHero partidos={partidos} />
             <CTAEmpresarial />
@@ -520,8 +523,10 @@ if (token) {
 ) : null}
                 </div>
               ))}
-            </div>
-          </div>
+        </div>
+        </div>
+        </div>
+        </div>
         )}
 
         {tab === 'posiciones' && (

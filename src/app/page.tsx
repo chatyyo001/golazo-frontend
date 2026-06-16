@@ -483,7 +483,7 @@ if (token) {
 
         {tab === 'partidos' && (
   <div style={{ backgroundImage: 'url(/estadio.jpg)', backgroundSize: 'cover', backgroundPosition: 'center top', backgroundAttachment: 'fixed' }} className="relative">
-    <div className="absolute inset-0 bg-black/70 pointer-events-none" />
+    <div className="absolute inset-0 bg-black/40 pointer-events-none" />
     <div className="relative z-10">
           <div>
             <PartidoColombiaHero partidos={partidos} />

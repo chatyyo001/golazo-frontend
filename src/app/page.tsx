@@ -435,6 +435,60 @@ function EquiposTab({ equipos }: { equipos: any[] }) {
     </div>
   );
 }
+// ─── GOLEADORES ───────────────────────────────────────────────────────────────
+
+function GoleadoresTab({ tournamentId }: { tournamentId: string | null }) {
+  const [scorers, setScorers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!tournamentId) return;
+    setLoading(true);
+    fetch(API + '/api/tournaments/' + tournamentId + '/scorers?limit=30')
+      .then(r => r.json())
+      .then(d => { setScorers(d || []); setLoading(false); });
+  }, [tournamentId]);
+
+  if (loading) return <p className="text-gray-500 text-center py-10">Cargando goleadores...</p>;
+
+  if (scorers.length === 0) {
+    return (
+      <div className="bg-gray-900 rounded-xl border border-gray-800 p-8 text-center">
+        <span className="text-4xl">⚽</span>
+        <p className="text-gray-400 text-sm mt-3">Aún no hay goles registrados en el torneo.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden">
+      <div className="px-4 py-3 bg-gray-950 border-b border-gray-800 flex items-center gap-2">
+        <span className="text-2xl">🥇</span>
+        <span className="text-yellow-400 font-black text-lg uppercase">Tabla de Goleadores</span>
+      </div>
+      <div className="divide-y divide-gray-800">
+        {scorers.map((s: any, i: number) => (
+          <div key={s.player_name + '-' + s.team?.id} className="flex items-center gap-3 px-4 py-3">
+            <span className={'w-7 h-7 rounded-full flex items-center justify-center text-xs font-black flex-shrink-0 ' +
+              (i === 0 ? 'bg-yellow-500 text-black' : i === 1 ? 'bg-gray-400 text-black' : i === 2 ? 'bg-orange-700 text-white' : 'bg-gray-800 text-gray-400')}>
+              {i + 1}
+            </span>
+            <FlagImg code={s.team?.flag} />
+            <div className="flex-1 min-w-0">
+              <p className="font-bold text-white text-sm truncate">{s.player_name}</p>
+              <p className="text-gray-500 text-xs">{s.team?.short_name || s.team?.name}</p>
+            </div>
+            <div className="text-right flex-shrink-0">
+              <p className="text-yellow-400 font-black text-xl">{s.goals}</p>
+              <p className="text-gray-600 text-xs uppercase">{s.goals === 1 ? 'gol' : 'goles'}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ─── MAIN ─────────────────────────────────────────────────────────────────────
 
 export default function Home() {
@@ -500,6 +554,7 @@ if (token) {
           { id: 'posiciones', label: 'Posiciones' },
           { id: 'equipos', label: 'Equipos' },
           { id: 'polla', label: 'Empresarial' },
+          { id: 'goleadores', label: 'Goleadores' },
           { id: 'torneo', label: 'Torneo' },
         ].map(t => (
           <button key={t.id} onClick={() => setTab(t.id)}
@@ -668,6 +723,10 @@ if (token) {
               ))}
             </div>
           </div>
+        )}
+
+        {tab === 'goleadores' && (
+          <GoleadoresTab tournamentId={torneo?.id || null} />
         )}
 
         {tab === 'torneo' && torneo && (

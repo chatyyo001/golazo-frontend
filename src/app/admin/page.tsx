@@ -34,6 +34,9 @@ export default function Admin() {
   const [mensaje, setMensaje] = useState<{ id: string; text: string; ok: boolean } | null>(null);
   const [scores, setScores] = useState<{ [key: string]: { home: string; away: string; status: string; minute: string } }>({});
   const [filtro, setFiltro] = useState<'todos' | 'scheduled' | 'live' | 'finished'>('todos');
+  const [golesOpen, setGolesOpen] = useState<string | null>(null);
+  const [goleadores, setGoleadores] = useState<{ [matchId: string]: any[] }>({});
+  const [nuevoGol, setNuevoGol] = useState<{ team_id: string; player_name: string; minute: string; is_own_goal: boolean }>({ team_id: '', player_name: '', minute: '', is_own_goal: false });
 
   const login = async () => {
     setError('');
@@ -121,6 +124,55 @@ export default function Admin() {
     setScores(prev => ({ ...prev, [id]: { ...prev[id], [field]: val } }));
   };
 
+  const cargarGoleadores = (matchId: string) => {
+    fetch(API + '/api/matches/' + matchId + '/scorers')
+      .then(r => r.json())
+      .then(d => setGoleadores(prev => ({ ...prev, [matchId]: d })));
+  };
+
+  const toggleGoles = (p: any) => {
+    if (golesOpen === p.id) { setGolesOpen(null); return; }
+    setGolesOpen(p.id);
+    setNuevoGol({ team_id: p.home_team?.id || '', player_name: '', minute: '', is_own_goal: false });
+    if (!goleadores[p.id]) cargarGoleadores(p.id);
+  };
+
+  const agregarGol = async (p: any) => {
+    if (!nuevoGol.player_name.trim()) return;
+    try {
+      const res = await fetch(API + '/api/scorers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+        body: JSON.stringify({
+          match_id: p.id,
+          team_id: nuevoGol.team_id,
+          player_name: nuevoGol.player_name.trim(),
+          minute: nuevoGol.minute ? Number(nuevoGol.minute) : null,
+          is_own_goal: nuevoGol.is_own_goal,
+        }),
+      });
+      if (!res.ok) { const d = await res.json(); throw new Error(d.error); }
+      setNuevoGol({ team_id: nuevoGol.team_id, player_name: '', minute: '', is_own_goal: false });
+      cargarGoleadores(p.id);
+      mostrarMensaje(p.id, '⚽ Gol agregado', true);
+    } catch (err: any) {
+      mostrarMensaje(p.id, '✗ Error: ' + err.message, false);
+    }
+  };
+
+  const borrarGol = async (matchId: string, scorerId: string) => {
+    try {
+      const res = await fetch(API + '/api/scorers/' + scorerId, {
+        method: 'DELETE',
+        headers: { Authorization: 'Bearer ' + token },
+      });
+      if (!res.ok) { const d = await res.json(); throw new Error(d.error); }
+      cargarGoleadores(matchId);
+    } catch (err: any) {
+      mostrarMensaje(matchId, '✗ Error: ' + err.message, false);
+    }
+  };
+
   const partidosFiltrados = partidos.filter(p => filtro === 'todos' ? true : p.status === filtro);
 
   if (!loggedIn) return (
@@ -178,6 +230,7 @@ export default function Admin() {
         {partidosFiltrados.map(p => {
           const s = scores[p.id] || { home: '0', away: '0', status: 'scheduled', minute: '' };
           const msg = mensaje?.id === p.id ? mensaje : null;
+          const golesPartido = goleadores[p.id] || [];
           return (
             <div key={p.id} className={'bg-gray-900 rounded-xl border overflow-hidden ' + (s.status === 'live' ? 'border-green-700' : s.status === 'finished' ? 'border-blue-900' : 'border-gray-800')}>
               {/* Header partido */}
@@ -228,6 +281,67 @@ export default function Admin() {
                    'Guardar'}
                 </button>
               </div>
+
+              {/* Toggle Goleadores */}
+              <button onClick={() => toggleGoles(p)}
+                className="w-full px-4 py-2 text-xs font-black text-yellow-400 border-t border-gray-800 hover:bg-gray-800 transition-colors flex items-center justify-center gap-2">
+                ⚽ Goleadores {golesOpen === p.id ? '▲' : '▼'}
+              </button>
+
+              {golesOpen === p.id && (
+                <div className="px-4 py-3 border-t border-gray-800 bg-gray-950 space-y-3">
+                  {/* Lista de goles actuales */}
+                  {golesPartido.length > 0 && (
+                    <div className="space-y-1">
+                      {golesPartido.map((g: any) => (
+                        <div key={g.id} className="flex items-center justify-between bg-gray-900 rounded-lg px-3 py-2">
+                          <div className="flex items-center gap-2 text-sm">
+                            <span className="text-gray-500 text-xs w-8">{g.minute ? g.minute + "'" : '—'}</span>
+                            <span className="text-white font-bold">{g.player_name}</span>
+                            <span className="text-gray-500 text-xs">{g.teams?.short_name || g.teams?.name}</span>
+                            {g.is_own_goal && <span className="text-red-400 text-xs font-bold">(autogol)</span>}
+                          </div>
+                          <button onClick={() => borrarGol(p.id, g.id)} className="text-red-500 hover:text-red-400 text-xs font-bold">
+                            ✕
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {golesPartido.length === 0 && (
+                    <p className="text-gray-600 text-xs text-center py-1">Sin goles registrados</p>
+                  )}
+
+                  {/* Formulario agregar gol */}
+                  <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-gray-800">
+                    <div className="flex gap-1">
+                      <button onClick={() => setNuevoGol(prev => ({ ...prev, team_id: p.home_team?.id }))}
+                        className={'px-2 py-1.5 rounded text-xs font-bold ' + (nuevoGol.team_id === p.home_team?.id ? 'bg-yellow-500 text-black' : 'bg-gray-800 text-gray-400')}>
+                        {p.home_team?.short_name || p.home_team?.name}
+                      </button>
+                      <button onClick={() => setNuevoGol(prev => ({ ...prev, team_id: p.away_team?.id }))}
+                        className={'px-2 py-1.5 rounded text-xs font-bold ' + (nuevoGol.team_id === p.away_team?.id ? 'bg-yellow-500 text-black' : 'bg-gray-800 text-gray-400')}>
+                        {p.away_team?.short_name || p.away_team?.name}
+                      </button>
+                    </div>
+                    <input type="text" value={nuevoGol.player_name}
+                      onChange={e => setNuevoGol(prev => ({ ...prev, player_name: e.target.value }))}
+                      placeholder="Jugador" className="flex-1 min-w-[120px] h-9 bg-gray-800 border border-gray-700 rounded-lg px-2 text-xs text-white focus:outline-none focus:border-yellow-500" />
+                    <input type="number" value={nuevoGol.minute}
+                      onChange={e => setNuevoGol(prev => ({ ...prev, minute: e.target.value }))}
+                      placeholder="Min" className="w-14 h-9 bg-gray-800 border border-gray-700 rounded-lg px-2 text-xs text-white text-center focus:outline-none focus:border-yellow-500" />
+                    <label className="flex items-center gap-1 text-xs text-gray-400">
+                      <input type="checkbox" checked={nuevoGol.is_own_goal}
+                        onChange={e => setNuevoGol(prev => ({ ...prev, is_own_goal: e.target.checked }))} />
+                      Autogol
+                    </label>
+                    <button onClick={() => agregarGol(p)}
+                      className="bg-yellow-500 hover:bg-yellow-400 text-black text-xs font-black px-3 py-2 rounded-lg uppercase">
+                      + Agregar
+                    </button>
+                  </div>
+                </div>
+              )}
 
               {/* Mensaje feedback */}
               {msg && (

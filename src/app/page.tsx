@@ -66,10 +66,21 @@ function AnalisisIA({ homeTeam, awayTeam }: { homeTeam: any; awayTeam: any }) {
 // ─── PARTIDO DESTACADO COLOMBIA ───────────────────────────────────────────────
 
 function PartidoColombiaHero({ partidos }: { partidos: any[] }) {
-  const col = partidos.find(p =>
+  const colMatches = partidos.filter(p =>
     p.home_team?.name?.toLowerCase().includes('colombia') ||
     p.away_team?.name?.toLowerCase().includes('colombia')
   );
+  if (colMatches.length === 0) return null;
+
+  const live = colMatches.find(p => p.status === 'live');
+  const upcoming = colMatches
+    .filter(p => p.status === 'scheduled')
+    .sort((a, b) => new Date(a.match_date).getTime() - new Date(b.match_date).getTime())[0];
+  const lastFinished = colMatches
+    .filter(p => p.status === 'finished')
+    .sort((a, b) => new Date(b.match_date).getTime() - new Date(a.match_date).getTime())[0];
+
+  const col = live || upcoming || lastFinished;
   if (!col) return null;
 
   const esCasa = col.home_team?.name?.toLowerCase().includes('colombia');

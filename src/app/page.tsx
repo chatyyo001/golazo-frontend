@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { getAnalisis } from './analisis';
-
+import BracketTab from './BracketTab';
 const API = 'https://golazo-api-production.up.railway.app';
 
 const FlagImg = ({ code }: { code: string }) => {
@@ -552,6 +552,7 @@ if (token) {
         {[
           { id: 'partidos', label: 'Partidos' },
           { id: 'posiciones', label: 'Posiciones' },
+          { id: 'bracket', label: 'Bracket' },
           { id: 'equipos', label: 'Equipos' },
           { id: 'polla', label: 'Empresarial' },
           { id: 'goleadores', label: 'Goleadores' },
@@ -683,8 +684,11 @@ if (token) {
           </div>
         )}
 
+        {tab === 'bracket' && (
+          <BracketTab />
+        )}
         {tab === 'equipos' && (
-  <EquiposTab equipos={equipos} />
+        <EquiposTab equipos={equipos} />
 )}
 
         {tab === 'polla' && (

@@ -566,7 +566,7 @@ if (token) {
               {grupos.map(g => (
                 <button key={g} onClick={() => setGrupoActivo(g)}
                   className={'px-3 py-1.5 rounded-lg text-xs font-black uppercase transition-colors ' +
-                    (grupoActivo === g ? 'bg-yellow-500 text-black' : 'bg-gray-100 text-gray-500 hover:text-white')}>
+                    (grupoActivo === g ? 'bg-yellow-500 text-black' : 'bg-gray-100 text-gray-700 hover:text-gray-900')}>
                   {g}
                 </button>
               ))}
@@ -593,7 +593,7 @@ if (token) {
                 {grupoActualData.rows.map((row: any, i: number) => (
                   <div key={row.team.id}
                     className={'grid grid-cols-[2rem_1fr_2rem_2rem_2rem_2rem_2rem_2.5rem] gap-1 px-3 py-3 items-center text-sm border-b border-gray-100 last:border-0 ' +
-                      (i < 2 ? 'bg-green-950 bg-opacity-30' : '')}>
+                      (i < 2 ? 'bg-green-50' : '')}>
                     <div className="flex items-center justify-center">
                       <span className={'w-5 h-5 rounded-full flex items-center justify-center text-xs font-black ' +
                         (i === 0 ? 'bg-yellow-500 text-black' : i === 1 ? 'bg-gray-600 text-white' : 'text-gray-500')}>
@@ -607,10 +607,10 @@ if (token) {
                         <p className="text-gray-600 text-xs">{row.team.short_name}</p>
                       </div>
                     </div>
-                    <span className="text-center text-gray-700 text-xs font-semibold">{row.pj}</span>
-                    <span className="text-center text-gray-700 text-xs font-semibold">{row.pg}</span>
-                    <span className="text-center text-gray-700 text-xs font-semibold">{row.pe}</span>
-                    <span className="text-center text-gray-700 text-xs font-semibold">{row.pp}</span>
+                    <span className="text-center text-gray-900 text-xs font-bold">{row.pj}</span>
+                    <span className="text-center text-gray-900 text-xs font-bold">{row.pg}</span>
+                    <span className="text-center text-gray-900 text-xs font-bold">{row.pe}</span>
+                    <span className="text-center text-gray-900 text-xs font-bold">{row.pp}</span>
                     <span className={'text-center text-xs font-bold ' + (row.dg > 0 ? 'text-green-600' : row.dg < 0 ? 'text-red-600' : 'text-gray-600')}>
                       {row.dg > 0 ? '+' : ''}{row.dg}
                     </span>

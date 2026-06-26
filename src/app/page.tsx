@@ -530,10 +530,10 @@ if (token) {
                  <div className="flex items-center px-4 py-3 gap-3">
                     <FlagImg code={p.home_team?.flag} />
                     <span className="text-sm font-bold text-right flex-1 text-gray-900">{p.home_team?.name}</span>
-                    <div className={'px-4 py-2 rounded-lg text-center min-w-16 ' + (p.status === 'live' ? 'bg-red-600' : 'bg-gray-800')}>
+                    <div className={'px-4 py-2 rounded-lg text-center min-w-16 ' + (p.status === 'live' ? 'bg-red-600' : 'bg-yellow-400')}>
                       {p.status === 'finished' && <span className="font-black text-lg text-gray-900">{p.home_score} - {p.away_score}</span>}
                       {p.status === 'live' && <span className="font-black text-white text-xs">VIVO {p.minute}&apos;</span>}
-                      {p.status === 'scheduled' && <span className="text-yellow-400 text-xs font-bold">VS</span>}
+                      {p.status === 'scheduled' && <span className="text-yellow-600 text-xs font-bold">VS</span>}
                     </div>
                     <span className="text-sm font-bold flex-1 text-gray-900">{p.away_team?.name}</span>
                     <FlagImg code={p.away_team?.flag} />

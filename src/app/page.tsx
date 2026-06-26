@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { getAnalisis } from './analisis';
-import BracketTab from './BracketTab';
+
 const API = 'https://golazo-api-production.up.railway.app';
 
 const FlagImg = ({ code }: { code: string }) => {
@@ -33,10 +33,10 @@ function AnalisisIA({ homeTeam, awayTeam }: { homeTeam: any; awayTeam: any }) {
   if (!analisis) return null;
 
   return (
-    <div className="mt-2 border-t border-gray-800">
+    <div className="mt-2 border-t border-gray-100">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-4 py-2 text-xs font-bold text-yellow-400 hover:bg-gray-800 transition-colors"
+        className="w-full flex items-center justify-between px-4 py-2 text-xs font-bold text-yellow-400 hover:bg-gray-50 transition-colors"
       >
         <span>⚡ Análisis IA · Te Lo Sugiero Sports</span>
         <span>{open ? '▲' : '▼'}</span>
@@ -234,24 +234,24 @@ function LineupModal({ match, onClose }: { match: any; onClose: () => void }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/80" onClick={onClose}>
-      <div className="bg-gray-950 w-full max-w-lg rounded-t-2xl border-t border-yellow-700 max-h-[90vh] overflow-y-auto"
+      <div className="bg-white w-full max-w-lg rounded-t-2xl border-t border-yellow-700 max-h-[90vh] overflow-y-auto"
         onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between px-4 py-3 border-b border-gray-800">
           <div>
             <p className="text-yellow-400 font-black text-sm uppercase">Armar XI Titular</p>
             <p className="text-gray-500 text-xs">{teamName} · {match.home_team?.name} vs {match.away_team?.name}</p>
           </div>
-          <button onClick={onClose} className="text-gray-500 hover:text-white text-xl">✕</button>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-700 text-xl">✕</button>
         </div>
 
         {homeIsSquad && awayIsSquad && (
           <div className="flex gap-2 px-4 py-2 border-b border-gray-800">
             <button onClick={() => setSide('home')}
-              className={'flex-1 py-1.5 rounded text-xs font-black ' + (side === 'home' ? 'bg-yellow-500 text-black' : 'bg-gray-800 text-gray-400')}>
+              className={'flex-1 py-1.5 rounded text-xs font-black ' + (side === 'home' ? 'bg-yellow-500 text-black' : 'bg-gray-100 text-gray-500')}>
               {match.home_team?.name}
             </button>
             <button onClick={() => setSide('away')}
-              className={'flex-1 py-1.5 rounded text-xs font-black ' + (side === 'away' ? 'bg-yellow-500 text-black' : 'bg-gray-800 text-gray-400')}>
+              className={'flex-1 py-1.5 rounded text-xs font-black ' + (side === 'away' ? 'bg-yellow-500 text-black' : 'bg-gray-100 text-gray-500')}>
               {match.away_team?.name}
             </button>
           </div>
@@ -260,7 +260,7 @@ function LineupModal({ match, onClose }: { match: any; onClose: () => void }) {
         <div className="flex gap-2 px-4 py-2 border-b border-gray-800">
           {Object.keys(FORMATIONS).map(f => (
             <button key={f} onClick={() => setFormation(f)}
-              className={'px-3 py-1 rounded text-xs font-black ' + (formation === f ? 'bg-yellow-500 text-black' : 'bg-gray-800 text-gray-400')}>
+              className={'px-3 py-1 rounded text-xs font-black ' + (formation === f ? 'bg-yellow-500 text-black' : 'bg-gray-100 text-gray-500')}>
               {f}
             </button>
           ))}
@@ -318,7 +318,7 @@ function LineupModal({ match, onClose }: { match: any; onClose: () => void }) {
               <div key={p.id} draggable
                 onDragStart={() => setDragging(p)}
                 onDragEnd={() => setDragging(null)}
-                className={'flex items-center gap-1 bg-gray-800 rounded px-2 py-1.5 cursor-grab active:cursor-grabbing border ' +
+                className={'flex items-center gap-1 bg-gray-100 rounded px-2 py-1.5 cursor-grab active:cursor-grabbing border ' +
                   (dragging?.id === p.id ? 'border-yellow-500 opacity-50' : 'border-gray-700')}>
                 <span className="text-yellow-600 text-xs font-black w-4">{p.number}</span>
                 <span className="text-white text-xs truncate">{p.short_name}</span>
@@ -387,8 +387,8 @@ function EquiposTab({ equipos }: { equipos: any[] }) {
       </div>
 
       {selectedTeam && (
-        <div className="bg-gray-900 rounded-xl border border-yellow-800 overflow-hidden">
-          <div className="flex items-center gap-3 px-4 py-3 bg-gray-950 border-b border-gray-800">
+        <div className="bg-white rounded-xl border border-yellow-300 shadow-sm overflow-hidden">
+          <div className="flex items-center gap-3 px-4 py-3 bg-gray-50 border-b border-gray-200">
             <FlagLg code={selectedTeam.flag} />
             <div>
               <p className="font-black text-white text-lg">{selectedTeam.name}</p>
@@ -398,18 +398,18 @@ function EquiposTab({ equipos }: { equipos: any[] }) {
           {loadingSquad ? (
             <p className="text-gray-500 text-center py-8">Cargando squad...</p>
           ) : (
-            <div className="divide-y divide-gray-800">
+            <div className="divide-y divide-gray-100">
               {['Porteros','Defensas','Mediocampistas','Delanteros'].map(group => posByGroup[group] && (
                 <div key={group}>
-                  <p className="px-4 py-2 text-yellow-600 text-xs font-black uppercase tracking-widest bg-gray-950">{group}</p>
+                  <p className="px-4 py-2 text-yellow-600 text-xs font-black uppercase tracking-widest bg-gray-50">{group}</p>
                   {posByGroup[group].map((p: any) => (
-                    <div key={p.id} className="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-800 transition-colors">
+                    <div key={p.id} className="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 transition-colors">
                      <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-black flex-shrink-0" style={{ background: p.name.charCodeAt(0) % 2 === 0 ? '#78350f' : '#1e3a5f', color: '#FCD116' }}>
   {p.name.split(' ').map((n: string) => n[0]).slice(0,2).join('')}
 </div>
 <span className="text-gray-600 text-xs font-bold w-6 text-right">{p.number}</span>
                       <span className="bg-gray-800 text-yellow-400 text-xs font-black px-1.5 py-0.5 rounded w-10 text-center">{p.position}</span>
-                      <span className="text-white text-sm font-bold flex-1">{p.name}</span>
+                      <span className="text-gray-900 text-sm font-bold flex-1">{p.name}</span>
                       <span className="text-gray-500 text-xs">{p.club}</span>
                     </div>
                   ))}
@@ -435,60 +435,6 @@ function EquiposTab({ equipos }: { equipos: any[] }) {
     </div>
   );
 }
-// ─── GOLEADORES ───────────────────────────────────────────────────────────────
-
-function GoleadoresTab({ tournamentId }: { tournamentId: string | null }) {
-  const [scorers, setScorers] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (!tournamentId) return;
-    setLoading(true);
-    fetch(API + '/api/tournaments/' + tournamentId + '/scorers?limit=30')
-      .then(r => r.json())
-      .then(d => { setScorers(d || []); setLoading(false); });
-  }, [tournamentId]);
-
-  if (loading) return <p className="text-gray-500 text-center py-10">Cargando goleadores...</p>;
-
-  if (scorers.length === 0) {
-    return (
-      <div className="bg-gray-900 rounded-xl border border-gray-800 p-8 text-center">
-        <span className="text-4xl">⚽</span>
-        <p className="text-gray-400 text-sm mt-3">Aún no hay goles registrados en el torneo.</p>
-      </div>
-    );
-  }
-
-  return (
-    <div className="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden">
-      <div className="px-4 py-3 bg-gray-950 border-b border-gray-800 flex items-center gap-2">
-        <span className="text-2xl">🥇</span>
-        <span className="text-yellow-400 font-black text-lg uppercase">Tabla de Goleadores</span>
-      </div>
-      <div className="divide-y divide-gray-800">
-        {scorers.map((s: any, i: number) => (
-          <div key={s.player_name + '-' + s.team?.id} className="flex items-center gap-3 px-4 py-3">
-            <span className={'w-7 h-7 rounded-full flex items-center justify-center text-xs font-black flex-shrink-0 ' +
-              (i === 0 ? 'bg-yellow-500 text-black' : i === 1 ? 'bg-gray-400 text-black' : i === 2 ? 'bg-orange-700 text-white' : 'bg-gray-800 text-gray-400')}>
-              {i + 1}
-            </span>
-            <FlagImg code={s.team?.flag} />
-            <div className="flex-1 min-w-0">
-              <p className="font-bold text-white text-sm truncate">{s.player_name}</p>
-              <p className="text-gray-500 text-xs">{s.team?.short_name || s.team?.name}</p>
-            </div>
-            <div className="text-right flex-shrink-0">
-              <p className="text-yellow-400 font-black text-xl">{s.goals}</p>
-              <p className="text-gray-600 text-xs uppercase">{s.goals === 1 ? 'gol' : 'goles'}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 // ─── MAIN ─────────────────────────────────────────────────────────────────────
 
 export default function Home() {
@@ -528,14 +474,14 @@ if (token) {
   const grupos = posiciones.map(g => g.group?.name).filter(Boolean).sort();
 
   return (
-    <main className="min-h-screen bg-black text-white pb-24">
+    <main className="min-h-screen bg-zinc-100 text-gray-900 pb-24">
 
-      <header className="bg-black border-b-2 border-yellow-500 px-4 py-3 flex items-center gap-3">
+      <header className="bg-white border-b-2 border-yellow-500 shadow-sm px-4 py-3 flex items-center gap-3">
         <div className="flex items-center gap-2 flex-1">
           <span className="text-2xl">⚽</span>
           <div>
             <p className="text-xs text-yellow-500 font-bold uppercase tracking-widest leading-none">Te Lo Sugiero</p>
-            <p className="text-xl font-black text-white uppercase leading-none">SPORTS</p>
+            <p className="text-xl font-black text-gray-900 uppercase leading-none">SPORTS</p>
           </div>
         </div>
         <div className="text-right">
@@ -548,18 +494,16 @@ if (token) {
         <p className="text-black font-black text-sm uppercase tracking-widest">Copa Mundial FIFA 2026 - 11 Jun - 19 Jul</p>
       </div>
 
-      <div className="flex border-b border-gray-800 bg-gray-950 overflow-x-auto">
+      <div className="flex border-b border-gray-200 bg-white overflow-x-auto shadow-sm">
         {[
           { id: 'partidos', label: 'Partidos' },
           { id: 'posiciones', label: 'Posiciones' },
-          { id: 'bracket', label: 'Bracket' },
           { id: 'equipos', label: 'Equipos' },
           { id: 'polla', label: 'Empresarial' },
-          { id: 'goleadores', label: 'Goleadores' },
           { id: 'torneo', label: 'Torneo' },
         ].map(t => (
           <button key={t.id} onClick={() => setTab(t.id)}
-            className={'px-4 py-3 text-xs font-bold uppercase tracking-wide transition-colors flex-1 whitespace-nowrap ' + (tab === t.id ? 'text-yellow-400 border-b-2 border-yellow-400 bg-gray-900' : 'text-gray-500 hover:text-white')}>
+            className={'px-4 py-3 text-xs font-bold uppercase tracking-wide transition-colors flex-1 whitespace-nowrap ' + (tab === t.id ? 'text-yellow-600 border-b-2 border-yellow-500 bg-zinc-50' : 'text-gray-400 hover:text-gray-700')}>
             {t.label}
           </button>
         ))}
@@ -577,7 +521,7 @@ if (token) {
             <div className="space-y-3">
               {partidos.length === 0 && <p className="text-gray-500 text-center py-10">No hay partidos programados.</p>}
               {partidos.map(p => (
-               <div key={p.id} className="relative bg-gray-900 rounded-xl border border-gray-800 overflow-hidden hover:border-yellow-800 transition-colors">
+               <div key={p.id} className="relative bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden hover:border-yellow-800 transition-colors">
                  {predicciones[p.id] && (
   <div className="absolute top-2 right-2 z-10 bg-yellow-900/40 border border-yellow-600 text-yellow-400 text-xs font-black px-2 py-0.5 rounded-full flex items-center gap-1">
     ✅ Pronosticado
@@ -585,16 +529,16 @@ if (token) {
 )}
                  <div className="flex items-center px-4 py-3 gap-3">
                     <FlagImg code={p.home_team?.flag} />
-                    <span className="text-sm font-bold text-right flex-1">{p.home_team?.name}</span>
+                    <span className="text-sm font-bold text-right flex-1 text-gray-900">{p.home_team?.name}</span>
                     <div className={'px-4 py-2 rounded-lg text-center min-w-16 ' + (p.status === 'live' ? 'bg-red-600' : 'bg-gray-800')}>
-                      {p.status === 'finished' && <span className="font-black text-lg text-white">{p.home_score} - {p.away_score}</span>}
+                      {p.status === 'finished' && <span className="font-black text-lg text-gray-900">{p.home_score} - {p.away_score}</span>}
                       {p.status === 'live' && <span className="font-black text-white text-xs">VIVO {p.minute}&apos;</span>}
                       {p.status === 'scheduled' && <span className="text-yellow-400 text-xs font-bold">VS</span>}
                     </div>
-                    <span className="text-sm font-bold flex-1">{p.away_team?.name}</span>
+                    <span className="text-sm font-bold flex-1 text-gray-900">{p.away_team?.name}</span>
                     <FlagImg code={p.away_team?.flag} />
                   </div>
-                  <div className="flex justify-between px-4 py-2 bg-gray-950 text-xs text-gray-500 border-t border-gray-800">
+                  <div className="flex justify-between px-4 py-2 bg-gray-50 text-xs text-gray-500 border-t border-gray-100">
                     <span className="text-yellow-700 font-bold">Grupo {p.groups?.name}</span>
                     <span className="text-gray-600">{p.stadium}</span>
                     <span>{formatFecha(p.match_date)}</span>
@@ -603,7 +547,7 @@ if (token) {
                  {SQUAD_TEAMS.includes(p.home_team?.name) || SQUAD_TEAMS.includes(p.away_team?.name) ? (
   <button
     onClick={(e) => { e.stopPropagation(); setLineupMatch(p); }}
-    className="w-full px-4 py-2 text-xs font-black text-yellow-400 border-t border-gray-800 hover:bg-gray-800 transition-colors flex items-center justify-center gap-2">
+    className="w-full px-4 py-2 text-xs font-black text-yellow-400 border-t border-gray-100 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
     ⚽ Armar XI Titular
   </button>
 ) : null}
@@ -622,15 +566,15 @@ if (token) {
               {grupos.map(g => (
                 <button key={g} onClick={() => setGrupoActivo(g)}
                   className={'px-3 py-1.5 rounded-lg text-xs font-black uppercase transition-colors ' +
-                    (grupoActivo === g ? 'bg-yellow-500 text-black' : 'bg-gray-800 text-gray-400 hover:text-white')}>
+                    (grupoActivo === g ? 'bg-yellow-500 text-black' : 'bg-gray-100 text-gray-500 hover:text-white')}>
                   {g}
                 </button>
               ))}
             </div>
 
             {grupoActualData ? (
-              <div className="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden">
-                <div className="px-4 py-3 bg-gray-950 border-b border-gray-800 flex items-center gap-2">
+              <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                <div className="px-4 py-3 bg-gray-50 border-b border-gray-200 flex items-center gap-2">
                   <span className="text-yellow-400 font-black text-lg">Grupo {grupoActualData.group.name}</span>
                   {grupoActualData.group.host_city && (
                     <span className="text-gray-500 text-xs">· {grupoActualData.group.host_city}</span>
@@ -648,7 +592,7 @@ if (token) {
                 </div>
                 {grupoActualData.rows.map((row: any, i: number) => (
                   <div key={row.team.id}
-                    className={'grid grid-cols-[2rem_1fr_2rem_2rem_2rem_2rem_2rem_2.5rem] gap-1 px-3 py-3 items-center text-sm border-b border-gray-800 last:border-0 ' +
+                    className={'grid grid-cols-[2rem_1fr_2rem_2rem_2rem_2rem_2rem_2.5rem] gap-1 px-3 py-3 items-center text-sm border-b border-gray-100 last:border-0 ' +
                       (i < 2 ? 'bg-green-950 bg-opacity-30' : '')}>
                     <div className="flex items-center justify-center">
                       <span className={'w-5 h-5 rounded-full flex items-center justify-center text-xs font-black ' +
@@ -673,7 +617,7 @@ if (token) {
                     <span className="text-center font-black text-yellow-400">{row.pts}</span>
                   </div>
                 ))}
-                <div className="px-3 py-2 flex gap-4 text-xs text-gray-600 border-t border-gray-800">
+                <div className="px-3 py-2 flex gap-4 text-xs text-gray-600 border-t border-gray-100">
                   <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-green-700 inline-block" /> Clasifican</span>
                   <span className="text-gray-700">PJ=Jugados PG=Ganados PE=Empatados PP=Perdidos DG=Diferencia PTS=Puntos</span>
                 </div>
@@ -684,11 +628,8 @@ if (token) {
           </div>
         )}
 
-        {tab === 'bracket' && (
-          <BracketTab />
-        )}
         {tab === 'equipos' && (
-        <EquiposTab equipos={equipos} />
+  <EquiposTab equipos={equipos} />
 )}
 
         {tab === 'polla' && (
@@ -707,7 +648,7 @@ if (token) {
                   'Notificaciones de goles y resultados',
                   'Bracket personalizado por empresa',
                 ].map((item, i) => (
-                  <div key={i} className="flex items-center gap-3 bg-black bg-opacity-30 rounded-lg px-4 py-3">
+                  <div key={i} className="flex items-center gap-3 bg-gray-50 rounded-lg px-4 py-3">
                     <span className="text-yellow-400 font-black">+</span>
                     <p className="text-white text-sm font-semibold">{item}</p>
                   </div>
@@ -720,7 +661,7 @@ if (token) {
             </div>
             <div className="grid grid-cols-3 gap-3 text-center">
               {[['48', 'Equipos'], ['72', 'Partidos'], ['39', 'Dias']].map((s, i) => (
-                <div key={i} className="bg-gray-900 rounded-xl p-4 border border-gray-800">
+                <div key={i} className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
                   <p className="text-yellow-400 font-black text-2xl">{s[0]}</p>
                   <p className="text-gray-400 text-xs uppercase">{s[1]}</p>
                 </div>
@@ -729,12 +670,8 @@ if (token) {
           </div>
         )}
 
-        {tab === 'goleadores' && (
-          <GoleadoresTab tournamentId={torneo?.id || null} />
-        )}
-
         {tab === 'torneo' && torneo && (
-          <div className="bg-gray-900 rounded-xl p-6 border border-yellow-900">
+          <div className="bg-white rounded-xl p-6 border border-yellow-200 shadow-sm">
             <div className="flex items-center gap-3 mb-6">
               <span className="text-4xl">🏆</span>
               <div>
@@ -743,24 +680,24 @@ if (token) {
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4 text-sm">
-              <div className="bg-gray-800 rounded-lg p-3">
+              <div className="bg-gray-100 rounded-lg p-3">
                 <p className="text-gray-400 text-xs uppercase">Inicio</p>
                 <p className="font-bold text-white">{torneo.start_date}</p>
               </div>
-              <div className="bg-gray-800 rounded-lg p-3">
+              <div className="bg-gray-100 rounded-lg p-3">
                 <p className="text-gray-400 text-xs uppercase">Final</p>
                 <p className="font-bold text-white">{torneo.end_date}</p>
               </div>
-              <div className="bg-gray-800 rounded-lg p-3">
+              <div className="bg-gray-100 rounded-lg p-3">
                 <p className="text-gray-400 text-xs uppercase">Premio</p>
                 <p className="font-bold text-yellow-400">{torneo.prize}</p>
               </div>
-              <div className="bg-gray-800 rounded-lg p-3">
+              <div className="bg-gray-100 rounded-lg p-3">
                 <p className="text-gray-400 text-xs uppercase">Estado</p>
                 <span className="bg-yellow-500 text-black px-2 py-1 rounded text-xs font-black uppercase">{torneo.status}</span>
               </div>
             </div>
-            <div className="mt-6 pt-4 border-t border-gray-800 text-center">
+            <div className="mt-6 pt-4 border-t border-gray-100 text-center">
               <p className="text-gray-500 text-xs">Presentado por</p>
               <p className="text-yellow-500 font-black uppercase tracking-widest">Te Lo Sugiero Sports</p>
             </div>
@@ -769,7 +706,7 @@ if (token) {
 
       </div>
 {lineupMatch && <LineupModal match={lineupMatch} onClose={() => setLineupMatch(null)} />}
-      <footer className="border-t border-gray-800 py-4 text-center mt-8">
+      <footer className="border-t border-gray-100 py-4 text-center mt-8">
         <p className="text-yellow-600 font-black text-sm uppercase tracking-widest">Te Lo Sugiero Sports</p>
         <p className="text-gray-600 text-xs mt-1">Copa Mundial FIFA 2026</p>
       </footer>

@@ -538,8 +538,8 @@ if (token) {
                     <span className="text-sm font-bold flex-1 text-gray-900">{p.away_team?.name}</span>
                     <FlagImg code={p.away_team?.flag} />
                   </div>
-                  <div className="flex justify-between px-4 py-2 bg-gray-50 text-xs text-gray-500 border-t border-gray-100">
-                    <span className="text-yellow-700 font-bold">Grupo {p.groups?.name}</span>
+                  <div className="flex justify-between px-4 py-2 text-xs border-t" style={{ background: `${({'A':'#ef4444','B':'#3b82f6','C':'#22c55e','D':'#f97316','E':'#a855f7','F':'#06b6d4','G':'#ec4899','H':'#eab308','I':'#14b8a6','J':'#f43f5e','K':'#8b5cf6','L':'#84cc16'} as Record<string,string>)[p.groups?.name] || '#f9fafb'}15`, borderTopColor: `${({'A':'#ef4444','B':'#3b82f6','C':'#22c55e','D':'#f97316','E':'#a855f7','F':'#06b6d4','G':'#ec4899','H':'#eab308','I':'#14b8a6','J':'#f43f5e','K':'#8b5cf6','L':'#84cc16'} as Record<string,string>)[p.groups?.name] || '#e5e7eb'}40` }}>
+                    <span className="font-bold" style={{ color: ({'A':'#ef4444','B':'#3b82f6','C':'#22c55e','D':'#f97316','E':'#a855f7','F':'#06b6d4','G':'#ec4899','H':'#eab308','I':'#14b8a6','J':'#f43f5e','K':'#8b5cf6','L':'#84cc16'} as Record<string,string>)[p.groups?.name] || '#92400e' }}>Grupo {p.groups?.name}</span>
                     <span className="text-gray-600">{p.stadium}</span>
                     <span>{formatFecha(p.match_date)}</span>
                   </div>

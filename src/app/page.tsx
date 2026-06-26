@@ -521,7 +521,7 @@ if (token) {
             <div className="space-y-3">
               {partidos.length === 0 && <p className="text-gray-500 text-center py-10">No hay partidos programados.</p>}
               {partidos.map(p => (
-               <div key={p.id} className="relative bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden hover:border-yellow-800 transition-colors">
+               <div key={p.id} className="relative bg-white rounded-xl shadow-sm overflow-hidden transition-colors" style={{ borderLeft: `4px solid ${({'A':'#ef4444','B':'#3b82f6','C':'#22c55e','D':'#f97316','E':'#a855f7','F':'#06b6d4','G':'#ec4899','H':'#eab308','I':'#14b8a6','J':'#f43f5e','K':'#8b5cf6','L':'#84cc16'} as Record<string,string>)[p.groups?.name] || '#e5e7eb'}`, borderTop: '0.5px solid #e5e7eb', borderBottom: '0.5px solid #e5e7eb', borderRight: '0.5px solid #e5e7eb' }}>
                  {predicciones[p.id] && (
   <div className="absolute top-2 right-2 z-10 bg-yellow-900/40 border border-yellow-600 text-yellow-400 text-xs font-black px-2 py-0.5 rounded-full flex items-center gap-1">
     ✅ Pronosticado

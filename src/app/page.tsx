@@ -580,7 +580,7 @@ if (token) {
                     <span className="text-gray-500 text-xs">· {grupoActualData.group.host_city}</span>
                   )}
                 </div>
-                <div className="grid grid-cols-[2rem_1fr_2rem_2rem_2rem_2rem_2rem_2.5rem] gap-1 px-3 py-2 text-xs text-gray-500 font-bold uppercase border-b border-gray-800">
+                <div className="grid grid-cols-[2rem_1fr_2rem_2rem_2rem_2rem_2rem_2.5rem] gap-1 px-3 py-2 text-xs text-gray-600 font-bold uppercase border-b border-gray-200">
                   <span className="text-center">#</span>
                   <span>Equipo</span>
                   <span className="text-center">PJ</span>
@@ -607,11 +607,11 @@ if (token) {
                         <p className="text-gray-600 text-xs">{row.team.short_name}</p>
                       </div>
                     </div>
-                    <span className="text-center text-gray-400 text-xs">{row.pj}</span>
-                    <span className="text-center text-gray-400 text-xs">{row.pg}</span>
-                    <span className="text-center text-gray-400 text-xs">{row.pe}</span>
-                    <span className="text-center text-gray-400 text-xs">{row.pp}</span>
-                    <span className={'text-center text-xs font-bold ' + (row.dg > 0 ? 'text-green-400' : row.dg < 0 ? 'text-red-400' : 'text-gray-400')}>
+                    <span className="text-center text-gray-700 text-xs font-semibold">{row.pj}</span>
+                    <span className="text-center text-gray-700 text-xs font-semibold">{row.pg}</span>
+                    <span className="text-center text-gray-700 text-xs font-semibold">{row.pe}</span>
+                    <span className="text-center text-gray-700 text-xs font-semibold">{row.pp}</span>
+                    <span className={'text-center text-xs font-bold ' + (row.dg > 0 ? 'text-green-600' : row.dg < 0 ? 'text-red-600' : 'text-gray-600')}>
                       {row.dg > 0 ? '+' : ''}{row.dg}
                     </span>
                     <span className="text-center font-black text-yellow-400">{row.pts}</span>

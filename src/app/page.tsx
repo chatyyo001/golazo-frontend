@@ -523,9 +523,7 @@ if (token) {
               {partidos.map(p => (
                <div key={p.id} className="relative bg-white rounded-xl shadow-sm overflow-hidden transition-colors" style={{ borderLeft: `4px solid ${({'A':'#ef4444','B':'#3b82f6','C':'#22c55e','D':'#f97316','E':'#a855f7','F':'#06b6d4','G':'#ec4899','H':'#eab308','I':'#14b8a6','J':'#f43f5e','K':'#8b5cf6','L':'#84cc16'} as Record<string,string>)[p.groups?.name] || '#e5e7eb'}`, borderTop: '0.5px solid #e5e7eb', borderBottom: '0.5px solid #e5e7eb', borderRight: '0.5px solid #e5e7eb' }}>
                  {predicciones[p.id] && (
-  <div className="absolute top-2 right-2 z-10 bg-yellow-900/40 border border-yellow-600 text-yellow-400 text-xs font-black px-2 py-0.5 rounded-full flex items-center gap-1">
-    ✅ Pronosticado
-  </div>
+  <div className="absolute top-2 right-2 z-10 w-2.5 h-2.5 rounded-full bg-green-500 shadow-sm" title="Pronosticado" />
 )}
                  <div className="flex items-center px-4 py-3 gap-3">
                     <FlagImg code={p.home_team?.flag} />
@@ -638,7 +636,7 @@ if (token) {
               <div className="text-center mb-6">
                 <p className="text-yellow-400 text-xs uppercase tracking-widest font-bold mb-1">Mundial 2026</p>
                 <h2 className="text-3xl font-black text-white uppercase">Polla Empresarial</h2>
-                <p className="text-gray-400 text-sm mt-2">La experiencia definitiva para equipos de trabajo</p>
+                <p className="text-gray-600 text-sm mt-2">La experiencia definitiva para equipos de trabajo</p>
               </div>
               <div className="space-y-3 mb-6">
                 {[
@@ -663,7 +661,7 @@ if (token) {
               {[['48', 'Equipos'], ['72', 'Partidos'], ['39', 'Dias']].map((s, i) => (
                 <div key={i} className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
                   <p className="text-yellow-400 font-black text-2xl">{s[0]}</p>
-                  <p className="text-gray-400 text-xs uppercase">{s[1]}</p>
+                  <p className="text-gray-600 text-xs uppercase">{s[1]}</p>
                 </div>
               ))}
             </div>
@@ -676,24 +674,24 @@ if (token) {
               <span className="text-4xl">🏆</span>
               <div>
                 <p className="text-xs text-yellow-500 uppercase tracking-widest">Copa Mundial FIFA</p>
-                <h1 className="text-2xl font-black text-white">{torneo.name}</h1>
+                <h1 className="text-2xl font-black text-gray-900">{torneo.name}</h1>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div className="bg-gray-100 rounded-lg p-3">
-                <p className="text-gray-400 text-xs uppercase">Inicio</p>
-                <p className="font-bold text-white">{torneo.start_date}</p>
+                <p className="text-gray-500 text-xs uppercase">Inicio</p>
+                <p className="font-bold text-gray-900">{torneo.start_date}</p>
               </div>
               <div className="bg-gray-100 rounded-lg p-3">
-                <p className="text-gray-400 text-xs uppercase">Final</p>
-                <p className="font-bold text-white">{torneo.end_date}</p>
+                <p className="text-gray-500 text-xs uppercase">Final</p>
+                <p className="font-bold text-gray-900">{torneo.end_date}</p>
               </div>
               <div className="bg-gray-100 rounded-lg p-3">
-                <p className="text-gray-400 text-xs uppercase">Premio</p>
+                <p className="text-gray-500 text-xs uppercase">Premio</p>
                 <p className="font-bold text-yellow-400">{torneo.prize}</p>
               </div>
               <div className="bg-gray-100 rounded-lg p-3">
-                <p className="text-gray-400 text-xs uppercase">Estado</p>
+                <p className="text-gray-500 text-xs uppercase">Estado</p>
                 <span className="bg-yellow-500 text-black px-2 py-1 rounded text-xs font-black uppercase">{torneo.status}</span>
               </div>
             </div>

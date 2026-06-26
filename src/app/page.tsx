@@ -512,8 +512,8 @@ if (token) {
       <div className="max-w-3xl mx-auto px-4 py-6">
 
         {tab === 'partidos' && (
-  <div style={{ backgroundImage: 'url(/estadio.jpg)', backgroundSize: 'cover', backgroundPosition: 'center top', backgroundAttachment: 'fixed' }} className="relative">
-    <div className="absolute inset-0 bg-black/40 pointer-events-none" />
+  <div className="relative bg-gray-950">
+    <div className="absolute inset-0 pointer-events-none" />
     <div className="relative z-10">
           <div>
             <PartidoColombiaHero partidos={partidos} />

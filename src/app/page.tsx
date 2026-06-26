@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { getAnalisis } from './analisis';import BracketTab from './BracketTab';
+import { getAnalisis } from './analisis';
 
 const API = 'https://golazo-api-production.up.railway.app';
 
@@ -498,7 +498,6 @@ if (token) {
         {[
           { id: 'partidos', label: 'Partidos' },
           { id: 'posiciones', label: 'Posiciones' },
-          { id: 'bracket', label: 'Bracket' },
           { id: 'equipos', label: 'Equipos' },
           { id: 'polla', label: 'Empresarial' },
           { id: 'torneo', label: 'Torneo' },
@@ -629,9 +628,6 @@ if (token) {
           </div>
         )}
 
-        {tab === 'bracket' && (
-          <BracketTab />
-        )}
         {tab === 'equipos' && (
   <EquiposTab equipos={equipos} />
 )}
@@ -652,7 +648,7 @@ if (token) {
                   'Notificaciones de goles y resultados',
                   'Bracket personalizado por empresa',
                 ].map((item, i) => (
-                  <div key={i} className="flex items-center gap-3 bg-gray-50 rounded-lg px-4 py-3">
+                  <div key={i} className="flex items-center gap-3 bg-white/10 rounded-lg px-4 py-3">
                     <span className="text-yellow-400 font-black">+</span>
                     <p className="text-white text-sm font-semibold">{item}</p>
                   </div>

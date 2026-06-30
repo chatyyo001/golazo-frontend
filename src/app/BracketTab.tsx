@@ -9,15 +9,49 @@ const FlagImg = ({ code }: { code: string }) => {
   return <img src={'https://flagcdn.com/20x15/' + code.toLowerCase() + '.png'} alt={code} width={20} height={15} className="rounded-sm flex-shrink-0" />;
 };
 
-function MatchCard({ match }: { match: any }) {
+// Determina el ganador real de un partido.
+// Si hay diferencia en el marcador regular, ese es el ganador.
+// Si quedó empatado (definido por penales), buscamos en el siguiente partido
+// del bracket cuál equipo quedó sentado en el slot correspondiente —
+// ese dato ya lo tenemos escrito (next_match_id / next_match_slot).
+function getWinnerSide(match: any, allMatches: any[]): 'home' | 'away' | null {
+  if (match.status !== 'finished') return null;
+  const hs = match.home_score;
+  const as_ = match.away_score;
+
+  if (hs > as_) return 'home';
+  if (as_ > hs) return 'away';
+
+  // Empate en tiempo regular -> se definió por penales.
+  // Revisamos quién quedó propagado al siguiente partido.
+  if (match.next_match_id) {
+    const nextMatch = allMatches.find(m => m.id === match.next_match_id);
+    if (nextMatch) {
+      const slotTeamId = match.next_match_slot === 'home'
+        ? nextMatch.home_team_id
+        : nextMatch.away_team_id;
+
+      if (slotTeamId && slotTeamId === match.home_team?.id) return 'home';
+      if (slotTeamId && slotTeamId === match.away_team?.id) return 'away';
+    }
+  }
+
+  return null; // empate sin propagación todavía (raro, pero por si acaso)
+}
+
+function MatchCard({ match, allMatches }: { match: any; allMatches: any[] }) {
   const ht = match.home_team;
   const at = match.away_team;
   const hs = match.home_score;
   const as_ = match.away_score;
   const fin = match.status === 'finished';
   const live = match.status === 'live';
-  const homeWins = fin && hs > as_;
-  const awayWins = fin && as_ > hs;
+
+  const winnerSide = getWinnerSide(match, allMatches);
+  const homeWins = winnerSide === 'home';
+  const awayWins = winnerSide === 'away';
+  const decidedByPenalties = fin && hs === as_ && winnerSide !== null;
+
   const isPlaceholderHome = !ht || ht.is_placeholder;
   const isPlaceholderAway = !at || at.is_placeholder;
 
@@ -30,7 +64,11 @@ function MatchCard({ match }: { match: any }) {
             : `P${match.match_number || ''}`}
         </span>
         {live && <span className="text-red-400 text-xs font-black animate-pulse">VIVO</span>}
-        {fin && <span className="text-gray-500 text-xs">Final</span>}
+        {fin && (
+          <span className="text-gray-500 text-xs">
+            {decidedByPenalties ? 'Final (Pen)' : 'Final'}
+          </span>
+        )}
       </div>
       <div className={`flex items-center gap-2 px-2 py-2 ${homeWins ? 'bg-gray-800' : ''}`}>
         {!isPlaceholderHome && <FlagImg code={ht.flag} />}
@@ -96,8 +134,9 @@ export default function BracketTab() {
 
   const currentMatches = view === 'r32' ? r32 : view === 'r16' ? r16 : view === 'qf' ? qf : [...sf, ...fi];
 
-  const champion = fi[0]?.status === 'finished'
-    ? (fi[0].home_score > fi[0].away_score ? fi[0].home_team?.name : fi[0].away_team?.name)
+  const finalWinnerSide = fi[0] ? getWinnerSide(fi[0], matches) : null;
+  const champion = finalWinnerSide
+    ? (finalWinnerSide === 'home' ? fi[0].home_team?.name : fi[0].away_team?.name)
     : null;
 
   return (
@@ -131,7 +170,7 @@ export default function BracketTab() {
       {currentMatches.length > 0 ? (
         <div className="grid grid-cols-2 gap-2">
           {currentMatches.map((m, i) => (
-            <MatchCard key={m.id || i} match={m} />
+            <MatchCard key={m.id || i} match={m} allMatches={matches} />
           ))}
         </div>
       ) : (

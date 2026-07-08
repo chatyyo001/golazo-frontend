@@ -28,6 +28,10 @@ const GROUP_COLORS: Record<string, string> = {
   G:'#ec4899',H:'#eab308',I:'#14b8a6',J:'#f43f5e',K:'#8b5cf6',L:'#84cc16'
 };
 
+const ROUND_LABELS: Record<string, string> = {
+  R32: 'Dieciseisavos', R16: 'Octavos', QF: 'Cuartos de Final', SF: 'Semifinal', F: 'Final',
+};
+
 // ─── ESTADÍSTICAS GOLAZO ──────────────────────────────────────────────────────
 // Antes esto era data hardcodeada a mano (copiada de ESPN). Ahora se conecta
 // al API real: /api/tournaments/:id/scorers (ya corregido) + partidos/equipos
@@ -204,11 +208,9 @@ function PartidoColombiaHero({ partidos }: { partidos: any[] }) {
   const upcoming = colMatches
     .filter(p => p.status === 'scheduled')
     .sort((a, b) => new Date(a.match_date).getTime() - new Date(b.match_date).getTime())[0];
-  const lastFinished = colMatches
-    .filter(p => p.status === 'finished')
-    .sort((a, b) => new Date(b.match_date).getTime() - new Date(a.match_date).getTime())[0];
 
-  const col = live || upcoming || lastFinished;
+  // Colombia ya fue eliminada: si no hay partido en vivo ni programado, no mostrar el hero.
+  const col = live || upcoming;
   if (!col) return null;
 
   const esCasa = col.home_team?.name?.toLowerCase().includes('colombia');
@@ -311,7 +313,9 @@ function PartidoCard({ p, predicciones, setLineupMatch }: { p: any; predicciones
       </div>
       <div className="flex justify-between px-4 py-2 text-xs border-t"
         style={{ background:`${color}15`, borderTopColor:`${color}40` }}>
-        <span className="font-bold" style={{ color }}>Grupo {p.groups?.name}</span>
+        <span className="font-bold" style={{ color }}>
+          {p.groups?.name ? `Grupo ${p.groups.name}` : (ROUND_LABELS[p.round] || p.round || '')}
+        </span>
         <span className="text-gray-600">{p.stadium}</span>
         <span>{formatFecha(p.match_date)}</span>
       </div>

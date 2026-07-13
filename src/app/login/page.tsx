@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-const API = 'https://golazo-api-production.up.railway.app';
+import { API } from '@/lib/config';
 
 export default function Login() {
   const router = useRouter();

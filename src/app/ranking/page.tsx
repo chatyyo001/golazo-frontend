@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-const API = 'https://golazo-api-production.up.railway.app';
+import { API } from '@/lib/config';
 
 function Medal({ pos }: { pos: number }) {
   if (pos === 1) return <span className="text-2xl">🥇</span>;

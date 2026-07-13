@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { getAnalisis } from './analisis';
 import BracketTab from './BracketTab';
 
-const API = 'https://golazo-api-production.up.railway.app';
+import { API } from '@/lib/config';
 
 const FlagImg = ({ code }: { code: string }) => {
   if (!code || code.length < 2) return <span className="w-8 h-6 bg-gray-700 rounded-sm inline-block" />;

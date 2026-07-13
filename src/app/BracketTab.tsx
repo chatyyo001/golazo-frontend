@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 
-const API = 'https://golazo-api-7x6w.onrender.com';
+import { API } from '@/lib/config';
 const TOURNAMENT_ID = '00000000-0000-0000-0000-000000002026';
 
 const FlagImg = ({ code }: { code: string }) => {

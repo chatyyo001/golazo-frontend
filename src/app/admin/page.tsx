@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 
-const API = 'https://golazo-api-production.up.railway.app';
+import { API } from '@/lib/config';
 
 function formatFecha(dateStr: string) {
   if (!dateStr) return '';

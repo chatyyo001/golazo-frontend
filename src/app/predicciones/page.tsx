@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { getAnalisis } from '../analisis';
 
-const API = 'https://golazo-api-production.up.railway.app';
+import { API } from '@/lib/config';
 const TOTAL_PARTIDOS = 72;
 const WA_NUMBER = '573057572968';
 const WA_MSG_GENERAL = encodeURIComponent('Hola, quiero información sobre la Polla Empresarial del Mundial 2026 para mi empresa 🏆');

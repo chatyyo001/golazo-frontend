@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 
-const API = 'https://golazo-api-production.up.railway.app';
+import { API } from '@/lib/config';
 
 const FlagImg = ({ code }: { code: string }) => {
   if (!code || code.length < 2) return <span className="w-6 h-4 bg-gray-700 rounded-sm inline-block" />;

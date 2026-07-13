@@ -1,4 +1,4 @@
-const GOLAZO_API = 'https://golazo-api-production.up.railway.app';
+import { API as GOLAZO_API } from '@/lib/config';
 
 const TEAM_MAP: Record<string, string> = {
   'Mexico': 'MEX', 'South Africa': 'RSA', 'Korea Republic': 'KOR', 'Czech Republic': 'CZE',

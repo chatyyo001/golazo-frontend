@@ -357,9 +357,9 @@ function GoleadoresDestacado({ torneoId }: { torneoId?: string }) {
   // Orden visual del podio: 2° a la izquierda, 1° al centro, 3° a la derecha
   const orden = [podio[1], podio[0], podio[2]].filter(Boolean);
   const estilo = (s: any) => {
-    if (s === podio[0]) return { ring: '#facc15', bg: '#facc15', texto: '#000', alto: 'h-16', avatar: 'w-20 h-20 text-2xl', medalla: '👑', num: '1' };
-    if (s === podio[1]) return { ring: '#d1d5db', bg: '#d1d5db', texto: '#000', alto: 'h-10', avatar: 'w-16 h-16 text-xl', medalla: '🥈', num: '2' };
-    return { ring: '#d97706', bg: '#d97706', texto: '#000', alto: 'h-7', avatar: 'w-16 h-16 text-xl', medalla: '🥉', num: '3' };
+    if (s === podio[0]) return { ring: '#facc15', bg: '#facc15', texto: '#000', alto: 'h-9', avatar: 'w-12 h-12 text-base', medalla: '👑', num: '1' };
+    if (s === podio[1]) return { ring: '#d1d5db', bg: '#d1d5db', texto: '#000', alto: 'h-6', avatar: 'w-10 h-10 text-sm', medalla: '🥈', num: '2' };
+    return { ring: '#d97706', bg: '#d97706', texto: '#000', alto: 'h-4', avatar: 'w-10 h-10 text-sm', medalla: '🥉', num: '3' };
   };
 
   return (
@@ -370,25 +370,25 @@ function GoleadoresDestacado({ torneoId }: { torneoId?: string }) {
       </div>
 
       {/* Podio top 3 */}
-      <div className="px-4 pt-2 pb-4 grid grid-cols-3 items-end gap-2">
+      <div className="px-4 pt-1 pb-3 grid grid-cols-3 items-end gap-2 max-w-sm mx-auto">
         {orden.map((s: any) => {
           const e = estilo(s);
           return (
-            <div key={s.player_name} className="flex flex-col items-center gap-1.5">
-              <span className="text-lg leading-none">{e.medalla}</span>
+            <div key={s.player_name} className="flex flex-col items-center gap-1">
+              <span className="text-sm leading-none">{e.medalla}</span>
               <div className="relative">
-                <div className={`${e.avatar} rounded-full flex items-center justify-center font-black shadow-lg`}
-                  style={{ background: e.bg, color: e.texto, boxShadow: `0 0 20px ${e.ring}55`, border: `3px solid ${e.ring}` }}>
+                <div className={`${e.avatar} rounded-full flex items-center justify-center font-black`}
+                  style={{ background: e.bg, color: e.texto, boxShadow: `0 0 12px ${e.ring}55`, border: `2px solid ${e.ring}` }}>
                   {iniciales(s.player_name)}
                 </div>
-                <img src={`https://flagcdn.com/20x15/${s.team?.flag}.png`} alt={s.team?.name}
-                  width={20} height={15} className="rounded-sm absolute -bottom-0.5 -right-1 ring-2 ring-black" />
+                <img src={`https://flagcdn.com/16x12/${s.team?.flag}.png`} alt={s.team?.name}
+                  width={16} height={12} className="rounded-sm absolute -bottom-0.5 -right-1 ring-1 ring-black" />
               </div>
-              <p className="text-white font-bold text-[11px] sm:text-xs text-center leading-tight">{s.player_name}</p>
-              <p className="font-black text-base leading-none" style={{ color: e.ring }}>{s.goals} ⚽</p>
-              <div className={`w-full ${e.alto} rounded-t-lg flex items-start justify-center pt-1`}
+              <p className="text-white font-bold text-[10px] text-center leading-tight">{s.player_name}</p>
+              <p className="font-black text-xs leading-none" style={{ color: e.ring }}>{s.goals} ⚽</p>
+              <div className={`w-full ${e.alto} rounded-t-md flex items-start justify-center pt-0.5`}
                 style={{ background: `linear-gradient(180deg, ${e.ring}40 0%, ${e.ring}10 100%)`, borderTop: `2px solid ${e.ring}` }}>
-                <span className="font-black text-sm" style={{ color: e.ring }}>{e.num}</span>
+                <span className="font-black text-xs" style={{ color: e.ring }}>{e.num}</span>
               </div>
             </div>
           );

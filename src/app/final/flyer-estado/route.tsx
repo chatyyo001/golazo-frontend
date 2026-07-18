@@ -60,7 +60,10 @@ export async function GET() {
               Predice el marcador
             </div>
             <div style={{ display: 'flex', fontSize: 32, color: '#e5e7eb' }}>
-              Gratis · Sin apuestas · Puntos canjeables
+              Gratis · Sin apuestas · Acumula puntos
+            </div>
+            <div style={{ display: 'flex', fontSize: 26, color: '#9ca3af' }}>
+              Canjeables muy pronto en TeLoSugiero
             </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 34 }}>

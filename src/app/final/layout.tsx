@@ -3,11 +3,11 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'La Gran Final · España vs Argentina | Golazo',
   description:
-    'Predice el marcador de la final del Mundial 2026 y gana puntos canjeables en TeLoSugiero. Gratis, sin apuestas. Domingo 19 de julio, 3:00 p.m. (Colombia).',
+    'Predice el marcador de la final del Mundial 2026 y acumula puntos — canjeables muy pronto en TeLoSugiero, nuestra plataforma en desarrollo. Gratis, sin apuestas. Domingo 19 de julio, 3:00 p.m. (Colombia).',
   openGraph: {
     title: 'La Gran Final · España 🇪🇸 vs 🇦🇷 Argentina',
     description:
-      'Predice el marcador y gana puntos canjeables. Gratis, sin apuestas. Domingo 3:00 p.m. — ¿quién será campeón del mundo?',
+      'Predice el marcador y acumula puntos, canjeables muy pronto en TeLoSugiero. Gratis, sin apuestas. Domingo 3:00 p.m. — ¿quién será campeón del mundo?',
     url: 'https://golazo.telosugiero.com/final',
     siteName: 'Golazo · Te Lo Sugiero Sports',
     locale: 'es_CO',
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'La Gran Final · España vs Argentina',
-    description: 'Predice el marcador y gana puntos canjeables. Gratis, sin apuestas.',
+    description: 'Predice el marcador y acumula puntos, canjeables muy pronto en TeLoSugiero. Gratis, sin apuestas.',
   },
 };
 

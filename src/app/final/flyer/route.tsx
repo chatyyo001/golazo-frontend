@@ -59,7 +59,10 @@ export async function GET() {
             ¿Te atreves a predecir el marcador?
           </div>
           <div style={{ display: 'flex', fontSize: 30, color: '#e5e7eb' }}>
-            Juega gratis · Sin apuestas · Gana puntos canjeables
+            Juega gratis · Sin apuestas · Acumula puntos
+          </div>
+          <div style={{ display: 'flex', fontSize: 24, color: '#9ca3af' }}>
+            Canjeables muy pronto en TeLoSugiero, nuestra plataforma en desarrollo
           </div>
         </div>
 

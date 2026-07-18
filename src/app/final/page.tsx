@@ -299,7 +299,7 @@ export default function FinalPage() {
               {[
                 ['1', 'Crea tu cuenta', 'Solo correo y contraseña. Gratis, en 30 segundos.'],
                 ['2', 'Predice el marcador', 'Puedes cambiarlo hasta el pitazo inicial.'],
-                ['3', 'Gana puntos', 'Exacto +3 · Ganador +1. Canjeables en TeLoSugiero.'],
+                ['3', 'Acumula puntos', 'Exacto +3 · Ganador +1. Canjeables muy pronto en TeLoSugiero, nuestra plataforma en desarrollo.'],
               ].map(([n, t, d]) => (
                 <div key={n} className="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-4 hover:border-yellow-500/50 transition-colors">
                   <span className="inline-flex w-7 h-7 items-center justify-center rounded-full bg-yellow-500 text-black text-sm font-black mb-2">{n}</span>
@@ -327,7 +327,7 @@ export default function FinalPage() {
             </p>
           )}
           <p className="text-gray-500 text-xs">
-            Marcador exacto +3 pts · Ganador +1 pt · Puntos canjeables en TeLoSugiero
+            Marcador exacto +3 pts · Ganador +1 pt · Puntos canjeables muy pronto en TeLoSugiero (en desarrollo)
           </p>
         </div>
       </section>

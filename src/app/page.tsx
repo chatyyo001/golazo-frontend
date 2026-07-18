@@ -302,9 +302,9 @@ function BannerFinal() {
         <video
           src="/promo-final.mp4"
           autoPlay muted loop playsInline
-          className="absolute inset-0 w-full h-full object-cover opacity-60"
+          className="absolute inset-0 w-full h-full object-cover"
         />
-        <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at center, rgba(59,48,0,0.35) 0%, rgba(0,0,0,0.85) 100%)' }} />
+        <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at center, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.55) 100%)' }} />
 
         {/* Contenido centrado encima */}
         <div className="relative flex flex-col items-center justify-center text-center gap-3 px-4 py-14" style={{ minHeight: '420px' }}>
@@ -312,9 +312,9 @@ function BannerFinal() {
           <p className="text-yellow-400 font-black text-4xl sm:text-6xl uppercase leading-none drop-shadow-[0_0_30px_rgba(234,179,8,0.5)]">
             🏆 La Gran Final
           </p>
-          <p className="text-white text-xl sm:text-3xl font-black uppercase">España 🇪🇸 vs 🇦🇷 Argentina</p>
-          <p className="text-yellow-200 text-base sm:text-xl font-bold">Mañana · 3:00 p.m. (Colombia)</p>
-          <p className="text-gray-300 text-xs sm:text-sm">Predice el marcador gratis · Sin apuestas · Acumula puntos</p>
+          <p className="text-white text-xl sm:text-3xl font-black uppercase" style={{ textShadow: '0 2px 12px rgba(0,0,0,0.9)' }}>España 🇪🇸 vs 🇦🇷 Argentina</p>
+          <p className="text-yellow-200 text-base sm:text-xl font-bold" style={{ textShadow: '0 2px 10px rgba(0,0,0,0.9)' }}>Mañana · 3:00 p.m. (Colombia)</p>
+          <p className="text-gray-100 text-xs sm:text-sm" style={{ textShadow: '0 1px 8px rgba(0,0,0,0.9)' }}>Predice el marcador gratis · Sin apuestas · Acumula puntos</p>
           <span className="mt-3 bg-yellow-500 text-black text-base sm:text-lg font-black px-10 py-4 rounded-2xl uppercase tracking-wide shadow-[0_0_40px_rgba(234,179,8,0.5)] hover:bg-yellow-400 transition-colors">
             Predice ya →
           </span>

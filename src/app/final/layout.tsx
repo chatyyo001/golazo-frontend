@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   description:
     'Predice el marcador de la final del Mundial 2026 y acumula puntos — canjeables muy pronto en TeLoSugiero, nuestra plataforma en desarrollo. Gratis, sin apuestas. Domingo 19 de julio, 3:00 p.m. (Colombia).',
   openGraph: {
-    title: 'La Gran Final · España 🇪🇸 vs 🇦🇷 Argentina',
+    title: 'La Gran Final · España vs Argentina',
     description:
       'Predice el marcador y acumula puntos, canjeables muy pronto en TeLoSugiero. Gratis, sin apuestas. Domingo 3:00 p.m. — ¿quién será campeón del mundo?',
     url: 'https://golazo.telosugiero.com/final',

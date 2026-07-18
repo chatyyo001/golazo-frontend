@@ -337,6 +337,62 @@ function BannerFinal() {
   );
 }
 
+// ─── GOLEADORES DESTACADO ─────────────────────────────────────────────────────
+
+function GoleadoresDestacado({ torneoId }: { torneoId?: string }) {
+  const [scorers, setScorers] = useState<any[]>([]);
+  useEffect(() => {
+    if (!torneoId) return;
+    fetch(API + '/api/tournaments/' + torneoId + '/scorers?limit=5')
+      .then(r => r.json())
+      .then(d => setScorers(Array.isArray(d) ? d : []))
+      .catch(() => {});
+  }, [torneoId]);
+
+  if (scorers.length === 0) return null;
+  const [lider, ...resto] = scorers;
+  const medallas = ['🥈', '🥉', '4°', '5°'];
+
+  return (
+    <div className="mb-4 rounded-xl overflow-hidden border border-yellow-600"
+      style={{ background: 'linear-gradient(135deg, #1c1c1c 0%, #3b3000 100%)' }}>
+      <div className="px-4 pt-3 pb-2 flex items-center justify-between">
+        <p className="text-yellow-400 font-black text-sm uppercase tracking-widest">🥇 Botín de Oro · Goleadores</p>
+      </div>
+
+      {/* Líder */}
+      <div className="px-4 pb-3 flex items-center gap-4">
+        <div className="w-14 h-14 rounded-full bg-yellow-500 text-black flex items-center justify-center font-black text-xl flex-shrink-0">
+          {lider.player_name.split(' ').map((w: string) => w[0]).slice(0, 2).join('')}
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-white font-black text-lg leading-tight truncate">{lider.player_name}</p>
+          <p className="text-gray-400 text-xs flex items-center gap-1.5">
+            <img src={`https://flagcdn.com/20x15/${lider.team?.flag}.png`} alt="" width={20} height={15} className="rounded-sm" />
+            {lider.team?.name} · {lider.matches} partidos
+          </p>
+        </div>
+        <div className="text-right flex-shrink-0">
+          <p className="text-yellow-400 font-black text-3xl leading-none">{lider.goals}</p>
+          <p className="text-gray-500 text-[10px] uppercase tracking-widest">goles</p>
+        </div>
+      </div>
+
+      {/* Resto del top */}
+      <div className="border-t border-yellow-900/50">
+        {resto.map((s, i) => (
+          <div key={s.player_name + i} className="px-4 py-2 flex items-center gap-3 border-b border-yellow-900/30 last:border-b-0">
+            <span className="w-6 text-center text-sm flex-shrink-0">{medallas[i] || ''}</span>
+            <img src={`https://flagcdn.com/20x15/${s.team?.flag}.png`} alt="" width={20} height={15} className="rounded-sm flex-shrink-0" />
+            <p className="flex-1 text-gray-200 text-sm font-bold truncate">{s.player_name}</p>
+            <p className="text-yellow-400 font-black text-sm flex-shrink-0">{s.goals} ⚽</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ─── PARTIDO CARD ─────────────────────────────────────────────────────────────
 
 function PartidoCard({ p, predicciones, setLineupMatch }: { p: any; predicciones: Record<string,boolean>; setLineupMatch: (m:any)=>void }) {
@@ -699,6 +755,9 @@ export default function Home() {
 
             {/* 2. CTA Empresarial */}
             <CTAEmpresarial />
+
+            {/* 2b. Goleadores destacados */}
+            <GoleadoresDestacado torneoId={torneo?.id} />
 
             {/* 3. Estadísticas colapsables */}
             <GolazoStats torneoId={torneo?.id} partidos={partidos} equipos={equipos} />

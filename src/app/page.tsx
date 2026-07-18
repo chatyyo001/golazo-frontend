@@ -297,12 +297,12 @@ function BannerFinal() {
   return (
     <a href="/final"
       className="block mb-4 rounded-xl overflow-hidden border border-yellow-600 hover:border-yellow-400 transition-all hover:scale-[1.01] bg-black">
-      <div className="relative w-full overflow-hidden" style={{ minHeight: '420px' }}>
-        {/* Video de fondo a todo el ancho */}
+      <div className="relative w-full overflow-hidden bg-black" style={{ minHeight: '380px' }}>
+        {/* Video completo centrado (sin recorte, para que se vean las banderas) */}
         <video
           src="/promo-final.mp4"
           autoPlay muted loop playsInline
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-contain"
         />
         <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at center, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.55) 100%)', animation: 'heroTextCycle 14s ease-in-out infinite' }} />
 
@@ -320,7 +320,7 @@ function BannerFinal() {
           }
         `}</style>
         <div className="relative flex flex-col items-center justify-center text-center gap-3 px-4 py-14"
-          style={{ minHeight: '420px', animation: 'heroTextCycle 14s ease-in-out infinite' }}>
+          style={{ minHeight: '380px', animation: 'heroTextCycle 14s ease-in-out infinite' }}>
           <p className="text-yellow-500 text-xs sm:text-sm font-bold uppercase tracking-[0.4em]">Copa Mundial 2026</p>
           <p className="text-yellow-400 font-black text-4xl sm:text-6xl uppercase leading-none drop-shadow-[0_0_30px_rgba(234,179,8,0.5)]">
             🏆 La Gran Final

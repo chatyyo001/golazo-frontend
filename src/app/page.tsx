@@ -350,45 +350,64 @@ function GoleadoresDestacado({ torneoId }: { torneoId?: string }) {
   }, [torneoId]);
 
   if (scorers.length === 0) return null;
-  const [lider, ...resto] = scorers;
-  const medallas = ['🥈', '🥉', '4°', '5°'];
+  const podio = scorers.slice(0, 3);
+  const resto = scorers.slice(3);
+  const iniciales = (n: string) => n.split(' ').map((w: string) => w[0]).slice(0, 2).join('');
+
+  // Orden visual del podio: 2° a la izquierda, 1° al centro, 3° a la derecha
+  const orden = [podio[1], podio[0], podio[2]].filter(Boolean);
+  const estilo = (s: any) => {
+    if (s === podio[0]) return { ring: '#facc15', bg: '#facc15', texto: '#000', alto: 'h-16', avatar: 'w-20 h-20 text-2xl', medalla: '👑', num: '1' };
+    if (s === podio[1]) return { ring: '#d1d5db', bg: '#d1d5db', texto: '#000', alto: 'h-10', avatar: 'w-16 h-16 text-xl', medalla: '🥈', num: '2' };
+    return { ring: '#d97706', bg: '#d97706', texto: '#000', alto: 'h-7', avatar: 'w-16 h-16 text-xl', medalla: '🥉', num: '3' };
+  };
 
   return (
     <div className="mb-4 rounded-xl overflow-hidden border border-yellow-600"
       style={{ background: 'linear-gradient(135deg, #1c1c1c 0%, #3b3000 100%)' }}>
-      <div className="px-4 pt-3 pb-2 flex items-center justify-between">
-        <p className="text-yellow-400 font-black text-sm uppercase tracking-widest">🥇 Botín de Oro · Goleadores</p>
+      <div className="px-4 pt-3 pb-1">
+        <p className="text-yellow-400 font-black text-sm uppercase tracking-widest text-center">🥇 Botín de Oro</p>
       </div>
 
-      {/* Líder */}
-      <div className="px-4 pb-3 flex items-center gap-4">
-        <div className="w-14 h-14 rounded-full bg-yellow-500 text-black flex items-center justify-center font-black text-xl flex-shrink-0">
-          {lider.player_name.split(' ').map((w: string) => w[0]).slice(0, 2).join('')}
-        </div>
-        <div className="flex-1 min-w-0">
-          <p className="text-white font-black text-lg leading-tight truncate">{lider.player_name}</p>
-          <p className="text-gray-400 text-xs flex items-center gap-1.5">
-            <img src={`https://flagcdn.com/20x15/${lider.team?.flag}.png`} alt="" width={20} height={15} className="rounded-sm" />
-            {lider.team?.name} · {lider.matches} partidos
-          </p>
-        </div>
-        <div className="text-right flex-shrink-0">
-          <p className="text-yellow-400 font-black text-3xl leading-none">{lider.goals}</p>
-          <p className="text-gray-500 text-[10px] uppercase tracking-widest">goles</p>
-        </div>
+      {/* Podio top 3 */}
+      <div className="px-4 pt-2 pb-4 grid grid-cols-3 items-end gap-2">
+        {orden.map((s: any) => {
+          const e = estilo(s);
+          return (
+            <div key={s.player_name} className="flex flex-col items-center gap-1.5">
+              <span className="text-lg leading-none">{e.medalla}</span>
+              <div className="relative">
+                <div className={`${e.avatar} rounded-full flex items-center justify-center font-black shadow-lg`}
+                  style={{ background: e.bg, color: e.texto, boxShadow: `0 0 20px ${e.ring}55`, border: `3px solid ${e.ring}` }}>
+                  {iniciales(s.player_name)}
+                </div>
+                <img src={`https://flagcdn.com/20x15/${s.team?.flag}.png`} alt={s.team?.name}
+                  width={20} height={15} className="rounded-sm absolute -bottom-0.5 -right-1 ring-2 ring-black" />
+              </div>
+              <p className="text-white font-bold text-[11px] sm:text-xs text-center leading-tight">{s.player_name}</p>
+              <p className="font-black text-base leading-none" style={{ color: e.ring }}>{s.goals} ⚽</p>
+              <div className={`w-full ${e.alto} rounded-t-lg flex items-start justify-center pt-1`}
+                style={{ background: `linear-gradient(180deg, ${e.ring}40 0%, ${e.ring}10 100%)`, borderTop: `2px solid ${e.ring}` }}>
+                <span className="font-black text-sm" style={{ color: e.ring }}>{e.num}</span>
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       {/* Resto del top */}
-      <div className="border-t border-yellow-900/50">
-        {resto.map((s, i) => (
-          <div key={s.player_name + i} className="px-4 py-2 flex items-center gap-3 border-b border-yellow-900/30 last:border-b-0">
-            <span className="w-6 text-center text-sm flex-shrink-0">{medallas[i] || ''}</span>
-            <img src={`https://flagcdn.com/20x15/${s.team?.flag}.png`} alt="" width={20} height={15} className="rounded-sm flex-shrink-0" />
-            <p className="flex-1 text-gray-200 text-sm font-bold truncate">{s.player_name}</p>
-            <p className="text-yellow-400 font-black text-sm flex-shrink-0">{s.goals} ⚽</p>
-          </div>
-        ))}
-      </div>
+      {resto.length > 0 && (
+        <div className="border-t border-yellow-900/50">
+          {resto.map((s, i) => (
+            <div key={s.player_name + i} className="px-4 py-2 flex items-center gap-3 border-b border-yellow-900/30 last:border-b-0">
+              <span className="w-6 text-center text-xs text-gray-400 flex-shrink-0">{i + 4}°</span>
+              <img src={`https://flagcdn.com/20x15/${s.team?.flag}.png`} alt="" width={20} height={15} className="rounded-sm flex-shrink-0" />
+              <p className="flex-1 text-gray-200 text-sm font-bold truncate">{s.player_name}</p>
+              <p className="text-yellow-400 font-black text-sm flex-shrink-0">{s.goals} ⚽</p>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

@@ -297,20 +297,25 @@ function BannerFinal() {
   return (
     <a href="/final"
       className="block mb-4 rounded-xl overflow-hidden border border-yellow-600 hover:border-yellow-400 transition-all hover:scale-[1.01] bg-black">
-      <div className="flex items-stretch">
+      <div className="relative w-full overflow-hidden" style={{ minHeight: '420px' }}>
+        {/* Video de fondo a todo el ancho */}
         <video
           src="/promo-final.mp4"
           autoPlay muted loop playsInline
-          className="w-40 sm:w-60 object-cover flex-shrink-0"
-          style={{ maxHeight: '320px' }}
+          className="absolute inset-0 w-full h-full object-cover opacity-60"
         />
-        <div className="flex-1 flex flex-col justify-center px-5 py-6 gap-2"
-          style={{ background: 'radial-gradient(ellipse at left, #3b3000 0%, #000 70%)' }}>
-          <p className="text-yellow-400 font-black text-2xl sm:text-4xl uppercase leading-none">🏆 La Gran Final</p>
-          <p className="text-white text-sm sm:text-xl font-black">España 🇪🇸 vs 🇦🇷 Argentina</p>
-          <p className="text-yellow-200 text-sm sm:text-lg font-bold">Mañana · 3:00 p.m. (Colombia)</p>
-          <p className="text-gray-400 text-xs sm:text-sm">Predice el marcador gratis · Sin apuestas · Acumula puntos</p>
-          <span className="self-start mt-2 bg-yellow-500 text-black text-sm sm:text-base font-black px-6 py-3 rounded-xl uppercase tracking-wide shadow-[0_0_25px_rgba(234,179,8,0.4)]">
+        <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at center, rgba(59,48,0,0.35) 0%, rgba(0,0,0,0.85) 100%)' }} />
+
+        {/* Contenido centrado encima */}
+        <div className="relative flex flex-col items-center justify-center text-center gap-3 px-4 py-14" style={{ minHeight: '420px' }}>
+          <p className="text-yellow-500 text-xs sm:text-sm font-bold uppercase tracking-[0.4em]">Copa Mundial 2026</p>
+          <p className="text-yellow-400 font-black text-4xl sm:text-6xl uppercase leading-none drop-shadow-[0_0_30px_rgba(234,179,8,0.5)]">
+            🏆 La Gran Final
+          </p>
+          <p className="text-white text-xl sm:text-3xl font-black uppercase">España 🇪🇸 vs 🇦🇷 Argentina</p>
+          <p className="text-yellow-200 text-base sm:text-xl font-bold">Mañana · 3:00 p.m. (Colombia)</p>
+          <p className="text-gray-300 text-xs sm:text-sm">Predice el marcador gratis · Sin apuestas · Acumula puntos</p>
+          <span className="mt-3 bg-yellow-500 text-black text-base sm:text-lg font-black px-10 py-4 rounded-2xl uppercase tracking-wide shadow-[0_0_40px_rgba(234,179,8,0.5)] hover:bg-yellow-400 transition-colors">
             Predice ya →
           </span>
         </div>

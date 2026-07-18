@@ -4,6 +4,7 @@ import { getAnalisis } from './analisis';
 import BracketTab from './BracketTab';
 
 import { API } from '@/lib/config';
+import { getAccessToken } from '@/lib/supabase';
 
 const FlagImg = ({ code }: { code: string }) => {
   if (!code || code.length < 2) return <span className="w-8 h-6 bg-gray-700 rounded-sm inline-block" />;
@@ -366,7 +367,7 @@ function LineupModal({ match, onClose }: { match: any; onClose: () => void }) {
   const removeFromSlot = (slotKey: string) => { setLineup(prev => { const n = { ...prev }; delete n[slotKey]; return n; }); };
 
   const handleSave = async () => {
-    const token = localStorage.getItem('token');
+    const token = await getAccessToken();
     if (!token) return;
     setSaving(true);
     await fetch(API + '/api/lineup-picks', {
@@ -580,7 +581,7 @@ export default function Home() {
     });
     fetch(API + '/api/teams').then(r => r.json()).then(d => setEquipos(d.data || d));
     fetch(API + '/api/matches').then(r => r.json()).then(d => setPartidos(d.data || []));
-    const token = localStorage.getItem('token');
+    void getAccessToken().then(token => {
     if (token) {
       fetch(API + '/api/predictions/me', { headers: { Authorization: 'Bearer ' + token } })
         .then(r => r.json())
@@ -590,6 +591,7 @@ export default function Home() {
           setPredicciones(map);
         });
     }
+    });
   }, []);
 
   const grupoActualData = posiciones.find(g => g.group?.name === grupoActivo);

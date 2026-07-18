@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { API } from '@/lib/config';
+import { supabase } from '@/lib/supabase';
 
 export default function Login() {
   const router = useRouter();
@@ -15,15 +15,10 @@ export default function Login() {
     setLoading(true);
     setError('');
     try {
-      const res = await fetch(API + '/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
-      const data = await res.json();
+      const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+      const res = { ok: !signInError };
+      const data = { error: signInError?.message };
       if (!res.ok) { setError(data.error || 'Error al iniciar sesión'); return; }
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
      router.push('/');
     } catch {
       setError('Error de conexión');

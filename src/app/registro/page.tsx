@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { API } from '@/lib/config';
+import { supabase } from '@/lib/supabase';
 
 export default function Registro() {
   const router = useRouter();
@@ -17,15 +17,18 @@ export default function Registro() {
     setLoading(true);
     setError('');
     try {
-      const res = await fetch(API + '/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, name, password, company_code: empresa }),
+      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: { data: { name, company_code: empresa || undefined } },
       });
-      const data = await res.json();
+      const res = { ok: !signUpError };
+      const data = { session: signUpData.session, error: signUpError?.message };
       if (!res.ok) { setError(data.error || 'Error al registrarse'); return; }
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
+      if (!data.session) {
+        setError('Revisa tu correo para confirmar la cuenta antes de ingresar.');
+        return;
+      }
       router.push('/predicciones');
     } catch {
       setError('Error de conexion');

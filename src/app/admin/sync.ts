@@ -1,4 +1,5 @@
 import { API as GOLAZO_API } from '@/lib/config';
+import { getAccessToken, supabase } from '@/lib/supabase';
 
 const TEAM_MAP: Record<string, string> = {
   'Mexico': 'MEX', 'South Africa': 'RSA', 'Korea Republic': 'KOR', 'Czech Republic': 'CZE',
@@ -16,13 +17,13 @@ const TEAM_MAP: Record<string, string> = {
 };
 
 async function getToken(): Promise<string> {
-  const res = await fetch(GOLAZO_API + '/api/auth/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: 'cmaoramirez@gmail.com', password: 'Abura4145' }),
-  });
-  const data = await res.json();
-  return data.token;
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user || !['admin', 'moderator'].includes(user.app_metadata.role)) {
+    throw new Error('Se requiere una sesión de administrador de TeLoSugiero Platform');
+  }
+  const token = await getAccessToken();
+  if (!token) throw new Error('Sesión no disponible');
+  return token;
 }
 
 async function getOurMatches(token: string) {

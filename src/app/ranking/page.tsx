@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { API } from '@/lib/config';
+import { supabase } from '@/lib/supabase';
 
 function Medal({ pos }: { pos: number }) {
   if (pos === 1) return <span className="text-2xl">🥇</span>;
@@ -22,8 +23,9 @@ export default function Ranking() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const userData = localStorage.getItem('user');
-    if (userData) setUser(JSON.parse(userData));
+    void supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) setUser({ id: user.id, name: user.user_metadata.name || user.email });
+    });
     fetch(API + '/api/predictions/ranking')
       .then(r => r.json())
       .then(d => { setRanking(d || []); setLoading(false); });
@@ -45,7 +47,7 @@ export default function Ranking() {
         </div>
         <div className="flex items-center gap-3">
           <a href="/predicciones" className="text-yellow-400 text-xs font-bold uppercase">Predecir</a>
-          <button onClick={() => { localStorage.clear(); router.push('/login'); }} className="text-gray-500 text-xs uppercase">Salir</button>
+          <button onClick={() => { supabase.auth.signOut(); router.push('/login'); }} className="text-gray-500 text-xs uppercase">Salir</button>
         </div>
       </header>
 

@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { getAnalisis } from '../analisis';
 
 import { API } from '@/lib/config';
+import { getAccessToken, supabase } from '@/lib/supabase';
 const TOTAL_PARTIDOS = 72;
 const WA_NUMBER = '573057572968';
 const WA_MSG_GENERAL = encodeURIComponent('Hola, quiero información sobre la Polla Empresarial del Mundial 2026 para mi empresa 🏆');
@@ -373,10 +374,11 @@ export default function Predicciones() {
   const [iaExpandido, setIaExpandido] = useState<string | null>(null);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const userData = localStorage.getItem('user');
-    if (!token || !userData) { router.push('/login'); return; }
-    setUser(JSON.parse(userData));
+    void (async () => {
+    const token = await getAccessToken();
+    const { data: { user: authUser } } = await supabase.auth.getUser();
+    if (!token || !authUser) { router.push('/login'); return; }
+    setUser({ id: authUser.id, name: authUser.user_metadata.name || authUser.email });
     const headers = { Authorization: 'Bearer ' + token };
     Promise.all([
       fetch(API + '/api/matches?status=scheduled', { headers }).then(r => r.json()),
@@ -386,6 +388,7 @@ export default function Predicciones() {
       setMisPredicciones(predsData || []);
       setLoading(false);
     });
+    })();
   }, []);
 
   useEffect(() => {
@@ -397,7 +400,8 @@ export default function Predicciones() {
   }, [misPredicciones]);
 
   const guardar = async (matchId: string) => {
-    const token = localStorage.getItem('token');
+    const token = await getAccessToken();
+    if (!token) { router.push('/login'); return; }
     const pred = preds[matchId];
     if (!pred || pred.home === '' || pred.away === '') return;
     setGuardando(matchId);
@@ -449,7 +453,7 @@ export default function Predicciones() {
         </div>
         <div className="flex items-center gap-3">
           <a href="/ranking" className="text-yellow-400 text-xs font-bold uppercase">Ranking</a>
-          <button onClick={() => { localStorage.clear(); router.push('/login'); }} className="text-gray-500 text-xs uppercase">Salir</button>
+          <button onClick={() => { supabase.auth.signOut(); router.push('/login'); }} className="text-gray-500 text-xs uppercase">Salir</button>
         </div>
       </header>
 

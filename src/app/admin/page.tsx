@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 
 import { API } from '@/lib/config';
+import { getAccessToken, supabase } from '@/lib/supabase';
 
 function formatFecha(dateStr: string) {
   if (!dateStr) return '';
@@ -40,15 +41,12 @@ export default function Admin() {
 
   const login = async () => {
     setError('');
-    const res = await fetch(API + '/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-    });
-    const data = await res.json();
-    if (!res.ok) { setError(data.error); return; }
-    if (!['admin', 'moderator'].includes(data.user.role)) { setError('No tienes permisos de admin'); return; }
-    setToken(data.token);
+    const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+    if (signInError || !signInData.user) { setError(signInError?.message || 'No fue posible iniciar sesión'); return; }
+    if (!['admin', 'moderator'].includes(signInData.user.app_metadata.role)) { setError('No tienes permisos de admin'); return; }
+    const accessToken = await getAccessToken();
+    if (!accessToken) { setError('No fue posible obtener la sesión'); return; }
+    setToken(accessToken);
     setLoggedIn(true);
   };
 

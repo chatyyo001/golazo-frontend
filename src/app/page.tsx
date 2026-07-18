@@ -291,6 +291,33 @@ function CTAEmpresarial() {
   );
 }
 
+// ─── BANNER LA GRAN FINAL ─────────────────────────────────────────────────────
+
+function BannerFinal() {
+  return (
+    <a href="/final"
+      className="block mb-4 rounded-xl overflow-hidden border border-yellow-600 hover:border-yellow-400 transition-all hover:scale-[1.01] bg-black">
+      <div className="flex items-stretch">
+        <video
+          src="/promo-final.mp4"
+          autoPlay muted loop playsInline
+          className="w-28 sm:w-36 object-cover flex-shrink-0"
+          style={{ maxHeight: '160px' }}
+        />
+        <div className="flex-1 flex flex-col justify-center px-4 py-3 gap-1"
+          style={{ background: 'radial-gradient(ellipse at left, #3b3000 0%, #000 70%)' }}>
+          <p className="text-yellow-400 font-black text-base sm:text-lg uppercase leading-none">🏆 La Gran Final</p>
+          <p className="text-white text-xs sm:text-sm font-bold">España 🇪🇸 vs 🇦🇷 Argentina · Mañana 3:00 p.m.</p>
+          <p className="text-gray-400 text-xs hidden sm:block">Predice el marcador gratis y acumula puntos</p>
+          <span className="self-start mt-1 bg-yellow-500 text-black text-xs font-black px-3 py-1.5 rounded-lg uppercase">
+            Predice ya →
+          </span>
+        </div>
+      </div>
+    </a>
+  );
+}
+
 // ─── PARTIDO CARD ─────────────────────────────────────────────────────────────
 
 function PartidoCard({ p, predicciones, setLineupMatch }: { p: any; predicciones: Record<string,boolean>; setLineupMatch: (m:any)=>void }) {
@@ -645,6 +672,9 @@ export default function Home() {
 
         {tab === 'partidos' && (
           <div>
+            {/* 0. Banner de la final con video */}
+            <BannerFinal />
+
             {/* 1. Hero Colombia */}
             <PartidoColombiaHero partidos={partidos} />
 

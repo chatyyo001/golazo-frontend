@@ -301,15 +301,16 @@ function BannerFinal() {
         <video
           src="/promo-final.mp4"
           autoPlay muted loop playsInline
-          className="w-28 sm:w-36 object-cover flex-shrink-0"
-          style={{ maxHeight: '160px' }}
+          className="w-40 sm:w-60 object-cover flex-shrink-0"
+          style={{ maxHeight: '320px' }}
         />
-        <div className="flex-1 flex flex-col justify-center px-4 py-3 gap-1"
+        <div className="flex-1 flex flex-col justify-center px-5 py-6 gap-2"
           style={{ background: 'radial-gradient(ellipse at left, #3b3000 0%, #000 70%)' }}>
-          <p className="text-yellow-400 font-black text-base sm:text-lg uppercase leading-none">🏆 La Gran Final</p>
-          <p className="text-white text-xs sm:text-sm font-bold">España 🇪🇸 vs 🇦🇷 Argentina · Mañana 3:00 p.m.</p>
-          <p className="text-gray-400 text-xs hidden sm:block">Predice el marcador gratis y acumula puntos</p>
-          <span className="self-start mt-1 bg-yellow-500 text-black text-xs font-black px-3 py-1.5 rounded-lg uppercase">
+          <p className="text-yellow-400 font-black text-2xl sm:text-4xl uppercase leading-none">🏆 La Gran Final</p>
+          <p className="text-white text-sm sm:text-xl font-black">España 🇪🇸 vs 🇦🇷 Argentina</p>
+          <p className="text-yellow-200 text-sm sm:text-lg font-bold">Mañana · 3:00 p.m. (Colombia)</p>
+          <p className="text-gray-400 text-xs sm:text-sm">Predice el marcador gratis · Sin apuestas · Acumula puntos</p>
+          <span className="self-start mt-2 bg-yellow-500 text-black text-sm sm:text-base font-black px-6 py-3 rounded-xl uppercase tracking-wide shadow-[0_0_25px_rgba(234,179,8,0.4)]">
             Predice ya →
           </span>
         </div>

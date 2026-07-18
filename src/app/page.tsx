@@ -304,10 +304,23 @@ function BannerFinal() {
           autoPlay muted loop playsInline
           className="absolute inset-0 w-full h-full object-cover"
         />
-        <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at center, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.55) 100%)' }} />
+        <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at center, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.55) 100%)', animation: 'heroTextCycle 14s ease-in-out infinite' }} />
 
-        {/* Contenido centrado encima */}
-        <div className="relative flex flex-col items-center justify-center text-center gap-3 px-4 py-14" style={{ minHeight: '420px' }}>
+        {/* Contenido centrado encima: visible unos segundos, luego se desvanece
+            para dejar ver el video, y regresa (ciclo de 14s, como el video) */}
+        <style>{`
+          @keyframes heroTextCycle {
+            0% { opacity: 0; transform: translateY(8px) }
+            5% { opacity: 1; transform: translateY(0) }
+            32% { opacity: 1 }
+            42% { opacity: 0 }
+            86% { opacity: 0 }
+            96% { opacity: 1; transform: translateY(0) }
+            100% { opacity: 0 }
+          }
+        `}</style>
+        <div className="relative flex flex-col items-center justify-center text-center gap-3 px-4 py-14"
+          style={{ minHeight: '420px', animation: 'heroTextCycle 14s ease-in-out infinite' }}>
           <p className="text-yellow-500 text-xs sm:text-sm font-bold uppercase tracking-[0.4em]">Copa Mundial 2026</p>
           <p className="text-yellow-400 font-black text-4xl sm:text-6xl uppercase leading-none drop-shadow-[0_0_30px_rgba(234,179,8,0.5)]">
             🏆 La Gran Final

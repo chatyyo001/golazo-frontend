@@ -294,6 +294,68 @@ function CTAEmpresarial() {
 // ─── BANNER LA GRAN FINAL ─────────────────────────────────────────────────────
 
 function BannerFinal() {
+  const [final, setFinal] = useState<any>(null);
+  useEffect(() => {
+    const load = () => fetch(API + '/api/matches/00000000-0000-0000-0000-000000000104')
+      .then(r => r.json()).then(m => { if (m?.id) setFinal(m); }).catch(() => {});
+    load();
+    const t = setInterval(load, 60000);
+    return () => clearInterval(t);
+  }, []);
+
+  const terminado = final?.status === 'finished';
+  const campeon = terminado
+    ? (final.home_score !== final.away_score
+        ? (final.home_score > final.away_score ? final.home_team : final.away_team)
+        : (final.home_penalties != null && final.away_penalties != null && final.home_penalties !== final.away_penalties
+            ? (final.home_penalties > final.away_penalties ? final.home_team : final.away_team)
+            : null))
+    : null;
+
+  // Modo campeón: la copa, la bandera y el marcador final
+  if (campeon) {
+    return (
+      <a href="/final"
+        className="block mb-4 rounded-xl overflow-hidden border border-yellow-500 hover:border-yellow-300 transition-all hover:scale-[1.01] relative"
+        style={{ background: 'radial-gradient(ellipse at 50% 0%, #4a3c00 0%, #000 65%)' }}>
+        <style>{`
+          @keyframes confettiCae { 0% { transform:translateY(-12%) rotate(0); opacity:0 } 10% { opacity:1 } 100% { transform:translateY(420px) rotate(720deg); opacity:0 } }
+          @keyframes brilloCopa { 0%,100% { transform:scale(1); filter:drop-shadow(0 0 18px rgba(250,204,21,.55)) } 50% { transform:scale(1.07); filter:drop-shadow(0 0 34px rgba(250,204,21,.9)) } }
+        `}</style>
+        <div aria-hidden className="absolute inset-0 pointer-events-none overflow-hidden">
+          {Array.from({ length: 26 }).map((_, i) => (
+            <span key={i} className="absolute block w-1.5 h-2.5 rounded-sm"
+              style={{ left: `${(i * 37) % 100}%`, background: i % 3 === 0 ? '#facc15' : i % 3 === 1 ? '#fff' : '#f59e0b',
+                animation: `confettiCae ${4 + (i % 4)}s linear ${(i % 8) * 0.6}s infinite` }} />
+          ))}
+        </div>
+
+        <div className="relative flex flex-col items-center text-center gap-2 px-4 py-8">
+          <span className="text-6xl sm:text-7xl" style={{ animation: 'brilloCopa 2.6s ease-in-out infinite' }}>🏆</span>
+          <p className="text-yellow-500 text-[10px] sm:text-xs font-bold uppercase tracking-[0.45em] mt-1">Campeón del Mundo</p>
+          <div className="flex items-center gap-3 mt-1">
+            <img src={`https://flagcdn.com/w160/${campeon.flag}.png`} alt={campeon.name}
+              className="w-16 sm:w-24 rounded-lg ring-2 ring-yellow-500/60 shadow-[0_0_35px_rgba(234,179,8,0.5)]" />
+            <p className="text-yellow-400 font-black text-3xl sm:text-5xl uppercase drop-shadow-[0_0_25px_rgba(234,179,8,0.6)]">
+              {campeon.name}
+            </p>
+          </div>
+          <p className="text-white/90 font-bold text-sm sm:text-base mt-2">
+            {final.home_team.name} {final.home_score} – {final.away_score} {final.away_team.name}
+            {final.home_penalties != null && final.away_penalties != null &&
+              ` (${final.home_penalties}-${final.away_penalties} pen.)`}
+          </p>
+          <p className="text-gray-400 text-[11px] sm:text-xs">Copa Mundial FIFA 2026 · Ver resultados y ranking →</p>
+        </div>
+      </a>
+    );
+  }
+
+  // Antes/durante el partido: banderas + cuenta regresiva
+  return <BannerCuentaRegresiva enJuego={final?.status === 'live'} />;
+}
+
+function BannerCuentaRegresiva({ enJuego }: { enJuego?: boolean }) {
   const KICKOFF = new Date('2026-07-19T20:00:00Z').getTime();
   const [ahora, setAhora] = useState(() => Date.now());
   useEffect(() => {
@@ -304,20 +366,18 @@ function BannerFinal() {
   const h = Math.floor(diff / 3600000);
   const m = Math.floor(diff / 60000) % 60;
   const s = Math.floor(diff / 1000) % 60;
-  const empezo = diff === 0;
+  const empezo = diff === 0 || enJuego;
 
   return (
     <a href="/final"
       className="block mb-4 rounded-xl overflow-hidden border border-yellow-600 hover:border-yellow-400 transition-all hover:scale-[1.01]"
       style={{ background: 'radial-gradient(ellipse at 50% 0%, #3b3000 0%, #000 70%)' }}>
       <div className="flex items-center justify-center gap-4 sm:gap-10 px-4 py-8">
-        {/* España */}
         <div className="flex flex-col items-center gap-2">
           <img src="https://flagcdn.com/w160/es.png" alt="España" className="w-20 sm:w-32 rounded-lg shadow-[0_0_30px_rgba(234,179,8,0.3)] ring-1 ring-white/20" />
           <p className="text-white font-black text-xs sm:text-sm uppercase">España</p>
         </div>
 
-        {/* Contador */}
         <div className="flex flex-col items-center gap-1">
           {empezo ? (
             <p className="text-yellow-400 font-black text-2xl sm:text-4xl uppercase animate-pulse">¡En juego!</p>
@@ -335,7 +395,6 @@ function BannerFinal() {
           )}
         </div>
 
-        {/* Argentina */}
         <div className="flex flex-col items-center gap-2">
           <img src="https://flagcdn.com/w160/ar.png" alt="Argentina" className="w-20 sm:w-32 rounded-lg shadow-[0_0_30px_rgba(56,189,248,0.3)] ring-1 ring-white/20" />
           <p className="text-white font-black text-xs sm:text-sm uppercase">Argentina</p>

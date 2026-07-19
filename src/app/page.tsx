@@ -321,7 +321,35 @@ function BannerFinal() {
         <style>{`
           @keyframes confettiCae { 0% { transform:translateY(-12%) rotate(0); opacity:0 } 10% { opacity:1 } 100% { transform:translateY(420px) rotate(720deg); opacity:0 } }
           @keyframes brilloCopa { 0%,100% { transform:scale(1); filter:drop-shadow(0 0 18px rgba(250,204,21,.55)) } 50% { transform:scale(1.07); filter:drop-shadow(0 0 34px rgba(250,204,21,.9)) } }
+          @keyframes ondearBandera { 0%,100% { transform:rotate(-6deg) } 50% { transform:rotate(6deg) } }
+          @keyframes saltarHincha { 0%,100% { transform:translateY(0) } 50% { transform:translateY(-6px) } }
         `}</style>
+
+        {/* Multitud celebrando (siluetas ilustradas, sin rostros ni fotos reales) */}
+        <div aria-hidden className="absolute inset-x-0 bottom-0 flex items-end justify-center gap-1 opacity-90" style={{ height: '38%' }}>
+          {Array.from({ length: 13 }).map((_, i) => {
+            const alto = 55 + ((i * 29) % 40); // siluetas de altura variable
+            const conBandera = i % 3 !== 1;
+            return (
+              <div key={i} className="relative flex-shrink-0" style={{ width: 22, animation: `saltarHincha ${1.4 + (i % 3) * 0.3}s ease-in-out ${(i % 5) * 0.15}s infinite` }}>
+                {conBandera && (
+                  <svg className="absolute -top-7 left-1/2 -translate-x-1/2" width="26" height="18" viewBox="0 0 26 18"
+                    style={{ transformOrigin: 'bottom center', animation: `ondearBandera ${1.6 + (i % 2) * 0.4}s ease-in-out infinite` }}>
+                    <rect width="26" height="18" rx="1.5" fill="#c60b1e" />
+                    <rect y="4.5" width="26" height="9" fill="#ffc400" />
+                  </svg>
+                )}
+                <svg width="22" height={alto} viewBox={`0 0 22 ${alto}`}>
+                  <path
+                    d={`M11 2 a5 5 0 1 1 0 10 a5 5 0 1 1 0 -10 Z M4 ${alto} L4 ${alto * 0.45} Q4 ${alto * 0.3} 11 ${alto * 0.3} Q18 ${alto * 0.3} 18 ${alto * 0.45} L18 ${alto}`}
+                    fill="#000" opacity="0.75"
+                  />
+                </svg>
+              </div>
+            );
+          })}
+        </div>
+
         <div aria-hidden className="absolute inset-0 pointer-events-none overflow-hidden">
           {Array.from({ length: 26 }).map((_, i) => (
             <span key={i} className="absolute block w-1.5 h-2.5 rounded-sm"
@@ -330,7 +358,7 @@ function BannerFinal() {
           ))}
         </div>
 
-        <div className="relative flex flex-col items-center text-center gap-2 px-4 py-8">
+        <div className="relative z-10 flex flex-col items-center text-center gap-2 px-4 pt-8 pb-16">
           <span className="text-6xl sm:text-7xl" style={{ animation: 'brilloCopa 2.6s ease-in-out infinite' }}>🏆</span>
           <p className="text-yellow-500 text-[10px] sm:text-xs font-bold uppercase tracking-[0.45em] mt-1">Campeón del Mundo</p>
           <div className="flex items-center gap-3 mt-1">

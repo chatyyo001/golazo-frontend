@@ -316,8 +316,12 @@ function BannerFinal() {
   if (campeon) {
     return (
       <a href="/final"
-        className="block mb-4 rounded-xl overflow-hidden border border-yellow-500 hover:border-yellow-300 transition-all hover:scale-[1.01] relative"
-        style={{ background: 'radial-gradient(ellipse at 50% 0%, #4a3c00 0%, #000 65%)' }}>
+        className="block mb-4 rounded-xl overflow-hidden border border-yellow-500 hover:border-yellow-300 transition-all hover:scale-[1.01] relative bg-black">
+        {/* Estadio de fondo + velo para que el texto dorado se lea */}
+        <img src="/estadio.jpg" alt="" aria-hidden
+          className="absolute inset-0 w-full h-full object-cover" />
+        <div aria-hidden className="absolute inset-0"
+          style={{ background: 'radial-gradient(ellipse at 50% 55%, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.55) 55%, rgba(0,0,0,0.65) 100%)' }} />
         <style>{`
           @keyframes confettiCae { 0% { transform:translateY(-12%) rotate(0); opacity:0 } 10% { opacity:1 } 100% { transform:translateY(420px) rotate(720deg); opacity:0 } }
           @keyframes brilloCopa {

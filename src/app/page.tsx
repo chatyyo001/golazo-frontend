@@ -357,7 +357,9 @@ function BannerFinal() {
         </div>
 
         <div className="relative z-10 flex flex-col items-center text-center gap-2 px-4 pt-8" style={{ paddingBottom: 92 }}>
-          <span className="text-8xl sm:text-9xl" style={{ animation: 'brilloCopa 3.4s ease-in-out infinite', display: 'inline-block' }}>🏆</span>
+          <span style={{ animation: 'brilloCopa 3.4s ease-in-out infinite', display: 'inline-block' }}>
+            <BalonCampeon />
+          </span>
           <p className="text-yellow-500 text-[10px] sm:text-xs font-bold uppercase tracking-[0.45em] mt-1">Campeón del Mundo</p>
           <div className="flex items-center gap-3 mt-1">
             <img src={`https://flagcdn.com/w160/${campeon.flag}.png`} alt={campeon.name}
@@ -427,6 +429,45 @@ function BannerCuentaRegresiva({ enJuego }: { enJuego?: boolean }) {
         </div>
       </div>
     </a>
+  );
+}
+
+// ─── BALÓN CAMPEÓN (diseño propio: balón dorado con corona) ───────────────────
+
+function BalonCampeon() {
+  return (
+    <svg width="132" height="132" viewBox="0 0 100 100" className="w-28 h-28 sm:w-36 sm:h-36">
+      <defs>
+        <radialGradient id="oroBalon" cx="38%" cy="30%">
+          <stop offset="0%" stopColor="#fff7cc" />
+          <stop offset="45%" stopColor="#facc15" />
+          <stop offset="100%" stopColor="#b45309" />
+        </radialGradient>
+        <linearGradient id="oroCorona" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#fde68a" />
+          <stop offset="100%" stopColor="#d97706" />
+        </linearGradient>
+      </defs>
+
+      {/* Corona */}
+      <path d="M24 33 L24 12 L37 24 L50 6 L63 24 L76 12 L76 33 Z"
+        fill="url(#oroCorona)" stroke="#92400e" strokeWidth="1.5" strokeLinejoin="round" />
+      <rect x="24" y="33" width="52" height="6" rx="2" fill="url(#oroCorona)" stroke="#92400e" strokeWidth="1.5" />
+      <circle cx="50" cy="9" r="3.2" fill="#fff7cc" />
+      <circle cx="24" cy="14" r="2.4" fill="#fff7cc" />
+      <circle cx="76" cy="14" r="2.4" fill="#fff7cc" />
+
+      {/* Balón */}
+      <circle cx="50" cy="66" r="27" fill="url(#oroBalon)" stroke="#92400e" strokeWidth="2" />
+      <path d="M50 57 L58.6 63.2 L55.3 73.3 L44.7 73.3 L41.4 63.2 Z" fill="#7c2d12" opacity="0.85" />
+      <g stroke="#7c2d12" strokeWidth="2.2" strokeLinecap="round" opacity="0.7">
+        <line x1="50" y1="57" x2="50" y2="39" />
+        <line x1="58.6" y1="63.2" x2="75.5" y2="57.8" />
+        <line x1="55.3" y1="73.3" x2="66" y2="87.5" />
+        <line x1="44.7" y1="73.3" x2="34" y2="87.5" />
+        <line x1="41.4" y1="63.2" x2="24.5" y2="57.8" />
+      </g>
+    </svg>
   );
 }
 

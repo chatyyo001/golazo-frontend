@@ -4,7 +4,7 @@ import { getAnalisis } from './analisis';
 import BracketTab from './BracketTab';
 
 import { API } from '@/lib/config';
-import { getAccessToken } from '@/lib/supabase';
+import { getAccessToken, supabase } from '@/lib/supabase';
 
 const FlagImg = ({ code }: { code: string }) => {
   if (!code || code.length < 2) return <span className="w-8 h-6 bg-gray-700 rounded-sm inline-block" />;
@@ -341,6 +341,29 @@ function BannerFinal() {
           <p className="text-white font-black text-xs sm:text-sm uppercase">Argentina</p>
         </div>
       </div>
+    </a>
+  );
+}
+
+// ─── CHIP DE PUNTOS (wallet de la Plataforma) ─────────────────────────────────
+
+function PuntosChipHeader() {
+  const [points, setPoints] = useState<number | null>(null);
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) return;
+      supabase.from('wallets').select('points').maybeSingle()
+        .then(({ data }) => { if (data) setPoints(data.points); });
+    });
+  }, []);
+
+  if (points === null) return null;
+  return (
+    <a href="https://telosugiero.com/wallet" target="_blank" rel="noopener noreferrer"
+      className="flex items-center gap-1.5 bg-yellow-500 hover:bg-yellow-400 transition-colors rounded-full px-3 py-1.5">
+      <span className="text-sm">🪙</span>
+      <span className="text-black font-black text-sm tabular-nums">{points}</span>
+      <span className="text-black/70 text-[10px] font-bold uppercase">pts</span>
     </a>
   );
 }
@@ -743,9 +766,12 @@ export default function Home() {
             <p className="text-xl font-black text-gray-900 uppercase leading-none">SPORTS</p>
           </div>
         </div>
-        <div className="text-right">
-          <p className="text-yellow-500 font-black text-sm uppercase tracking-wider">Mundial 2026</p>
-          <p className="text-gray-500 text-xs">CO US MX CA</p>
+        <div className="flex items-center gap-3">
+          <PuntosChipHeader />
+          <div className="text-right">
+            <p className="text-yellow-500 font-black text-sm uppercase tracking-wider">Mundial 2026</p>
+            <p className="text-gray-500 text-xs">CO US MX CA</p>
+          </div>
         </div>
       </header>
 

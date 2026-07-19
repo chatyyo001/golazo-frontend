@@ -320,8 +320,13 @@ function BannerFinal() {
         style={{ background: 'radial-gradient(ellipse at 50% 0%, #4a3c00 0%, #000 65%)' }}>
         <style>{`
           @keyframes confettiCae { 0% { transform:translateY(-12%) rotate(0); opacity:0 } 10% { opacity:1 } 100% { transform:translateY(420px) rotate(720deg); opacity:0 } }
-          @keyframes brilloCopa { 0%,100% { transform:scale(1); filter:drop-shadow(0 0 18px rgba(250,204,21,.55)) } 50% { transform:scale(1.07); filter:drop-shadow(0 0 34px rgba(250,204,21,.9)) } }
-          @keyframes ondearBandera { 0%,100% { transform:rotate(-6deg) } 50% { transform:rotate(6deg) } }
+          @keyframes brilloCopa {
+            0% { transform:scale(1) rotate(0deg); filter:drop-shadow(0 0 18px rgba(250,204,21,.5)) }
+            12% { transform:scale(1.4) rotate(-5deg); filter:drop-shadow(0 0 45px rgba(250,204,21,1)) }
+            26% { transform:scale(0.94) rotate(4deg); filter:drop-shadow(0 0 22px rgba(250,204,21,.6)) }
+            40% { transform:scale(1.18) rotate(-2deg); filter:drop-shadow(0 0 34px rgba(250,204,21,.85)) }
+            55%, 100% { transform:scale(1) rotate(0deg); filter:drop-shadow(0 0 18px rgba(250,204,21,.5)) }
+          }
           @keyframes saltarHincha { 0%,100% { transform:translateY(0) } 50% { transform:translateY(-6px) } }
         `}</style>
 
@@ -330,16 +335,8 @@ function BannerFinal() {
           <div className="absolute inset-0" style={{ background: 'linear-gradient(0deg, rgba(0,0,0,0.6) 0%, transparent 100%)' }} />
           {Array.from({ length: 13 }).map((_, i) => {
             const alto = 42 + ((i * 29) % 30); // siluetas de altura variable
-            const conBandera = i % 3 !== 1;
             return (
               <div key={i} className="relative flex-shrink-0" style={{ width: 20, animation: `saltarHincha ${1.4 + (i % 3) * 0.3}s ease-in-out ${(i % 5) * 0.15}s infinite` }}>
-                {conBandera && (
-                  <svg className="absolute -top-6 left-1/2 -translate-x-1/2" width="24" height="16" viewBox="0 0 24 16"
-                    style={{ transformOrigin: 'bottom center', animation: `ondearBandera ${1.6 + (i % 2) * 0.4}s ease-in-out infinite` }}>
-                    <rect width="24" height="16" rx="1.5" fill="#c60b1e" />
-                    <rect y="4" width="24" height="8" fill="#ffc400" />
-                  </svg>
-                )}
                 <svg width="20" height={alto} viewBox={`0 0 20 ${alto}`}>
                   <path
                     d={`M10 2 a4.5 4.5 0 1 1 0 9 a4.5 4.5 0 1 1 0 -9 Z M3.5 ${alto} L3.5 ${alto * 0.4} Q3.5 ${alto * 0.26} 10 ${alto * 0.26} Q16.5 ${alto * 0.26} 16.5 ${alto * 0.4} L16.5 ${alto}`}
@@ -360,7 +357,7 @@ function BannerFinal() {
         </div>
 
         <div className="relative z-10 flex flex-col items-center text-center gap-2 px-4 pt-8" style={{ paddingBottom: 92 }}>
-          <span className="text-6xl sm:text-7xl" style={{ animation: 'brilloCopa 2.6s ease-in-out infinite' }}>🏆</span>
+          <span className="text-8xl sm:text-9xl" style={{ animation: 'brilloCopa 3.4s ease-in-out infinite', display: 'inline-block' }}>🏆</span>
           <p className="text-yellow-500 text-[10px] sm:text-xs font-bold uppercase tracking-[0.45em] mt-1">Campeón del Mundo</p>
           <div className="flex items-center gap-3 mt-1">
             <img src={`https://flagcdn.com/w160/${campeon.flag}.png`} alt={campeon.name}

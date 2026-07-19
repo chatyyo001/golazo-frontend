@@ -294,43 +294,51 @@ function CTAEmpresarial() {
 // ─── BANNER LA GRAN FINAL ─────────────────────────────────────────────────────
 
 function BannerFinal() {
+  const KICKOFF = new Date('2026-07-19T20:00:00Z').getTime();
+  const [ahora, setAhora] = useState(() => Date.now());
+  useEffect(() => {
+    const t = setInterval(() => setAhora(Date.now()), 1000);
+    return () => clearInterval(t);
+  }, []);
+  const diff = Math.max(0, KICKOFF - ahora);
+  const h = Math.floor(diff / 3600000);
+  const m = Math.floor(diff / 60000) % 60;
+  const s = Math.floor(diff / 1000) % 60;
+  const empezo = diff === 0;
+
   return (
     <a href="/final"
-      className="block mb-4 rounded-xl overflow-hidden border border-yellow-600 hover:border-yellow-400 transition-all hover:scale-[1.01] bg-black">
-      <div className="relative w-full overflow-hidden bg-black" style={{ minHeight: '380px' }}>
-        {/* Video completo centrado (sin recorte, para que se vean las banderas) */}
-        <video
-          src="/promo-final.mp4"
-          autoPlay muted loop playsInline
-          className="absolute inset-0 w-full h-full object-contain"
-        />
-        <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at center, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.55) 100%)', animation: 'heroTextCycle 14s ease-in-out infinite' }} />
+      className="block mb-4 rounded-xl overflow-hidden border border-yellow-600 hover:border-yellow-400 transition-all hover:scale-[1.01]"
+      style={{ background: 'radial-gradient(ellipse at 50% 0%, #3b3000 0%, #000 70%)' }}>
+      <div className="flex items-center justify-center gap-4 sm:gap-10 px-4 py-8">
+        {/* España */}
+        <div className="flex flex-col items-center gap-2">
+          <img src="https://flagcdn.com/w160/es.png" alt="España" className="w-20 sm:w-32 rounded-lg shadow-[0_0_30px_rgba(234,179,8,0.3)] ring-1 ring-white/20" />
+          <p className="text-white font-black text-xs sm:text-sm uppercase">España</p>
+        </div>
 
-        {/* Contenido centrado encima: visible unos segundos, luego se desvanece
-            para dejar ver el video, y regresa (ciclo de 14s, como el video) */}
-        <style>{`
-          @keyframes heroTextCycle {
-            0% { opacity: 0; transform: translateY(8px) }
-            5% { opacity: 1; transform: translateY(0) }
-            32% { opacity: 1 }
-            42% { opacity: 0 }
-            86% { opacity: 0 }
-            96% { opacity: 1; transform: translateY(0) }
-            100% { opacity: 0 }
-          }
-        `}</style>
-        <div className="relative flex flex-col items-center justify-center text-center gap-3 px-4 py-14"
-          style={{ minHeight: '380px', animation: 'heroTextCycle 14s ease-in-out infinite' }}>
-          <p className="text-yellow-500 text-xs sm:text-sm font-bold uppercase tracking-[0.4em]">Copa Mundial 2026</p>
-          <p className="text-yellow-400 font-black text-4xl sm:text-6xl uppercase leading-none drop-shadow-[0_0_30px_rgba(234,179,8,0.5)]">
-            🏆 La Gran Final
-          </p>
-          <p className="text-white text-xl sm:text-3xl font-black uppercase" style={{ textShadow: '0 2px 12px rgba(0,0,0,0.9)' }}>España 🇪🇸 vs 🇦🇷 Argentina</p>
-          <p className="text-yellow-200 text-base sm:text-xl font-bold" style={{ textShadow: '0 2px 10px rgba(0,0,0,0.9)' }}>Mañana · 3:00 p.m. (Colombia)</p>
-          <p className="text-gray-100 text-xs sm:text-sm" style={{ textShadow: '0 1px 8px rgba(0,0,0,0.9)' }}>Predice el marcador gratis · Sin apuestas · Acumula puntos</p>
-          <span className="mt-3 bg-yellow-500 text-black text-base sm:text-lg font-black px-10 py-4 rounded-2xl uppercase tracking-wide shadow-[0_0_40px_rgba(234,179,8,0.5)] hover:bg-yellow-400 transition-colors">
-            Predice ya →
-          </span>
+        {/* Contador */}
+        <div className="flex flex-col items-center gap-1">
+          {empezo ? (
+            <p className="text-yellow-400 font-black text-2xl sm:text-4xl uppercase animate-pulse">¡En juego!</p>
+          ) : (
+            <div className="flex items-center gap-1.5 tabular-nums">
+              {[[h, 'hrs'], [m, 'min'], [s, 'seg']].map(([v, l]) => (
+                <div key={String(l)} className="flex flex-col items-center">
+                  <span className="bg-white/10 border border-yellow-500/40 rounded-lg px-2 py-1.5 sm:px-3 sm:py-2 text-yellow-300 font-black text-xl sm:text-3xl min-w-[46px] sm:min-w-[64px] text-center">
+                    {String(v).padStart(2, '0')}
+                  </span>
+                  <span className="text-[9px] uppercase tracking-widest text-gray-500 mt-1">{String(l)}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Argentina */}
+        <div className="flex flex-col items-center gap-2">
+          <img src="https://flagcdn.com/w160/ar.png" alt="Argentina" className="w-20 sm:w-32 rounded-lg shadow-[0_0_30px_rgba(56,189,248,0.3)] ring-1 ring-white/20" />
+          <p className="text-white font-black text-xs sm:text-sm uppercase">Argentina</p>
         </div>
       </div>
     </a>

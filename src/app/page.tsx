@@ -461,7 +461,7 @@ function PuntosChipHeader() {
 
 // ─── GOLEADORES DESTACADO ─────────────────────────────────────────────────────
 
-function GoleadoresDestacado({ torneoId, torneoNombre }: { torneoId?: string; torneoNombre?: string }) {
+function GoleadoresDestacado({ torneoId, torneoNombre, esMundial }: { torneoId?: string; torneoNombre?: string; esMundial?: boolean }) {
   const [scorers, setScorers] = useState<any[]>([]);
   useEffect(() => {
     if (!torneoId) return;
@@ -491,19 +491,31 @@ function GoleadoresDestacado({ torneoId, torneoNombre }: { torneoId?: string; to
       <div aria-hidden className="absolute inset-0 opacity-40"
         style={{ background: 'radial-gradient(ellipse at 75% 15%, rgba(250,204,21,0.28) 0%, transparent 55%), radial-gradient(ellipse at 20% 80%, rgba(217,119,6,0.18) 0%, transparent 60%)' }} />
 
+      {/* Banner del Mundial: pieza gráfica completa. En otros torneos se usa el
+          encabezado con el trofeo, que no lleva textos fijos. */}
+      {esMundial && (
+        <img src="/botin-banner.jpg" alt="Botín de Oro"
+          className="relative w-full block" />
+      )}
+
       <div className="relative flex items-stretch gap-3 px-3 pt-4 pb-2">
-        {/* Botín dorado */}
-        <img src="/botin-oro.jpg" alt="Trofeo Botín de Oro"
-          className="w-24 sm:w-36 object-contain flex-shrink-0 self-center rounded-xl"
-          style={{ filter: 'drop-shadow(0 0 22px rgba(250,204,21,0.35))' }} />
+        {!esMundial && (
+          <img src="/botin-oro.jpg" alt="Trofeo Botín de Oro"
+            className="w-24 sm:w-36 object-contain flex-shrink-0 self-center rounded-xl"
+            style={{ filter: 'drop-shadow(0 0 22px rgba(250,204,21,0.35))' }} />
+        )}
 
         <div className="flex-1 min-w-0">
-          <p className="text-yellow-400 font-black text-lg sm:text-2xl uppercase tracking-wide leading-none">
-            👑 Botín de Oro
-          </p>
-          <p className="text-gray-400 text-[10px] sm:text-xs mt-1 uppercase tracking-wider">
-            Máximos goleadores{torneoNombre ? ` · ${torneoNombre}` : ''}
-          </p>
+          {!esMundial && (
+            <>
+              <p className="text-yellow-400 font-black text-lg sm:text-2xl uppercase tracking-wide leading-none">
+                👑 Botín de Oro
+              </p>
+              <p className="text-gray-400 text-[10px] sm:text-xs mt-1 uppercase tracking-wider">
+                Máximos goleadores{torneoNombre ? ` · ${torneoNombre}` : ''}
+              </p>
+            </>
+          )}
 
           {/* Podio top 3 */}
           <div className="mt-3 grid grid-cols-3 items-end gap-2">
@@ -955,7 +967,7 @@ export default function Home() {
             <CTAEmpresarial torneoNombre={nombreCorto(torneo)} />
 
             {/* 2b. Goleadores destacados */}
-            <GoleadoresDestacado torneoId={torneo?.id} torneoNombre={nombreCorto(torneo)} />
+            <GoleadoresDestacado torneoId={torneo?.id} torneoNombre={nombreCorto(torneo)} esMundial={esMundial} />
 
             {/* 3. Estadísticas colapsables */}
             <GolazoStats torneoId={torneo?.id} torneoNombre={nombreCorto(torneo)} partidos={partidos} equipos={equipos} />

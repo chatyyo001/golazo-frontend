@@ -456,14 +456,28 @@ function GoleadoresDestacado({ torneoId }: { torneoId?: string }) {
   };
 
   return (
-    <div className="mb-4 rounded-xl overflow-hidden border border-yellow-600"
-      style={{ background: 'linear-gradient(135deg, #1c1c1c 0%, #3b3000 100%)' }}>
-      <div className="px-4 pt-3 pb-1">
-        <p className="text-yellow-400 font-black text-sm uppercase tracking-widest text-center">🥇 Botín de Oro</p>
-      </div>
+    <div className="mb-4 rounded-2xl overflow-hidden border border-yellow-600/70 relative"
+      style={{ background: 'linear-gradient(135deg, #0b1120 0%, #1c1508 60%, #2b1f04 100%)' }}>
+      {/* Luces de estadio de fondo */}
+      <div aria-hidden className="absolute inset-0 opacity-40"
+        style={{ background: 'radial-gradient(ellipse at 75% 15%, rgba(250,204,21,0.28) 0%, transparent 55%), radial-gradient(ellipse at 20% 80%, rgba(217,119,6,0.18) 0%, transparent 60%)' }} />
 
-      {/* Podio top 3 */}
-      <div className="px-4 pt-1 pb-3 grid grid-cols-3 items-end gap-2 max-w-sm mx-auto">
+      <div className="relative flex items-stretch gap-3 px-3 pt-4 pb-2">
+        {/* Botín dorado */}
+        <img src="/botin-oro.jpg" alt="Trofeo Botín de Oro"
+          className="w-24 sm:w-36 object-contain flex-shrink-0 self-center rounded-xl"
+          style={{ filter: 'drop-shadow(0 0 22px rgba(250,204,21,0.35))' }} />
+
+        <div className="flex-1 min-w-0">
+          <p className="text-yellow-400 font-black text-lg sm:text-2xl uppercase tracking-wide leading-none">
+            👑 Botín de Oro
+          </p>
+          <p className="text-gray-400 text-[10px] sm:text-xs mt-1 uppercase tracking-wider">
+            Máximos goleadores del Mundial 2026
+          </p>
+
+          {/* Podio top 3 */}
+          <div className="mt-3 grid grid-cols-3 items-end gap-2">
         {orden.map((s: any) => {
           const e = estilo(s);
           return (
@@ -486,13 +500,15 @@ function GoleadoresDestacado({ torneoId }: { torneoId?: string }) {
             </div>
           );
         })}
+          </div>
+        </div>
       </div>
 
       {/* Resto del top */}
       {resto.length > 0 && (
-        <div className="border-t border-yellow-900/50">
+        <div className="relative mx-3 mb-3 rounded-xl overflow-hidden bg-black/40 border border-white/5">
           {resto.map((s, i) => (
-            <div key={s.player_name + i} className="px-4 py-2 flex items-center gap-3 border-b border-yellow-900/30 last:border-b-0">
+            <div key={s.player_name + i} className="px-3 py-2 flex items-center gap-3 border-b border-white/5 last:border-b-0">
               <span className="w-6 text-center text-xs text-gray-400 flex-shrink-0">{i + 4}°</span>
               <img src={`https://flagcdn.com/20x15/${s.team?.flag}.png`} alt="" width={20} height={15} className="rounded-sm flex-shrink-0" />
               <p className="flex-1 text-gray-200 text-sm font-bold truncate">{s.player_name}</p>
@@ -501,6 +517,21 @@ function GoleadoresDestacado({ torneoId }: { torneoId?: string }) {
           ))}
         </div>
       )}
+
+      {/* Barra de beneficios */}
+      <div className="relative mx-3 mb-3 rounded-xl border border-yellow-600/30 bg-black/30 grid grid-cols-3 divide-x divide-white/5">
+        {[
+          ['📊', 'Suma puntos', 'por tu acierto'],
+          ['🏆', 'Compite', 'en el ranking'],
+          ['🎁', 'Gana premios', 'increíbles'],
+        ].map(([icon, titulo, sub]) => (
+          <div key={titulo} className="px-2 py-2.5 text-center">
+            <p className="text-base leading-none">{icon}</p>
+            <p className="text-white font-bold text-[11px] mt-1 leading-tight">{titulo}</p>
+            <p className="text-gray-500 text-[9px] leading-tight">{sub}</p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

@@ -518,20 +518,6 @@ function GoleadoresDestacado({ torneoId }: { torneoId?: string }) {
         </div>
       )}
 
-      {/* Barra de beneficios */}
-      <div className="relative mx-3 mb-3 rounded-xl border border-yellow-600/30 bg-black/30 grid grid-cols-3 divide-x divide-white/5">
-        {[
-          ['📊', 'Suma puntos', 'por tu acierto'],
-          ['🏆', 'Compite', 'en el ranking'],
-          ['🎁', 'Gana premios', 'increíbles'],
-        ].map(([icon, titulo, sub]) => (
-          <div key={titulo} className="px-2 py-2.5 text-center">
-            <p className="text-base leading-none">{icon}</p>
-            <p className="text-white font-bold text-[11px] mt-1 leading-tight">{titulo}</p>
-            <p className="text-gray-500 text-[9px] leading-tight">{sub}</p>
-          </div>
-        ))}
-      </div>
     </div>
   );
 }

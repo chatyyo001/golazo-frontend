@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { getAnalisis } from './analisis';
 import BracketTab from './BracketTab';
+import LlavesTab from './LlavesTab';
 
 import { API } from '@/lib/config';
 import { getAccessToken, supabase } from '@/lib/supabase';
@@ -24,6 +25,21 @@ const formatFecha = (dateStr: string) => {
   return d.toLocaleDateString('es-CO', { day: '2-digit', month: 'short' }) + ' ' + d.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' });
 };
 
+// ─── Torneo activo: todo el texto sale de la base, nada hardcodeado ───────────
+
+const ESTADO_TORNEO: Record<string, string> = {
+  active: 'En curso',
+  upcoming: 'Próximamente',
+  finished: 'Finalizado',
+};
+
+function rangoFechas(t: any) {
+  if (!t?.start_date) return '';
+  const fmt = (d: string) =>
+    new Date(d + 'T12:00:00').toLocaleDateString('es-CO', { day: 'numeric', month: 'short' });
+  return t.end_date ? `${fmt(t.start_date)} - ${fmt(t.end_date)}` : fmt(t.start_date);
+}
+
 const GROUP_COLORS: Record<string, string> = {
   A:'#ef4444',B:'#3b82f6',C:'#22c55e',D:'#f97316',E:'#a855f7',F:'#06b6d4',
   G:'#ec4899',H:'#eab308',I:'#14b8a6',J:'#f43f5e',K:'#8b5cf6',L:'#84cc16'
@@ -40,7 +56,7 @@ const ROUND_LABELS: Record<string, string> = {
 
 type Goleador = { player_name: string; goals: number; team?: { name: string; flag: string } };
 
-function GolazoStats({ torneoId, partidos, equipos }: { torneoId?: string; partidos: any[]; equipos: any[] }) {
+function GolazoStats({ torneoId, torneoNombre, partidos, equipos }: { torneoId?: string; torneoNombre?: string; partidos: any[]; equipos: any[] }) {
   const [statsTab, setStatsTab] = useState<'goles'|'equipos'>('goles');
   const [open, setOpen] = useState(false);
   const [goleadores, setGoleadores] = useState<Goleador[]>([]);
@@ -91,7 +107,7 @@ function GolazoStats({ torneoId, partidos, equipos }: { torneoId?: string; parti
       >
         <div className="flex items-center gap-2">
           <span className="text-base">📊</span>
-          <span className="font-black text-sm uppercase tracking-wide text-gray-900">Estadísticas · Mundial 2026</span>
+          <span className="font-black text-sm uppercase tracking-wide text-gray-900">Estadísticas{torneoNombre ? ` · ${torneoNombre}` : ''}</span>
           <span className="text-xs text-gray-400 font-normal">{faseActual}</span>
         </div>
         <span className="text-xs text-gray-400">{open ? '▲' : '▼'}</span>
@@ -150,7 +166,7 @@ function GolazoStats({ torneoId, partidos, equipos }: { torneoId?: string; parti
             ))}
           </div>
           <div className="px-4 py-2 border-t border-gray-100">
-            <p className="text-xs text-gray-400">Datos en vivo · Copa Mundial FIFA 2026</p>
+            <p className="text-xs text-gray-400">Datos en vivo{torneoNombre ? ` · ${torneoNombre}` : ''}</p>
           </div>
         </div>
       )}
@@ -270,7 +286,7 @@ function PartidoColombiaHero({ partidos }: { partidos: any[] }) {
 
 // ─── CTA POLLA EMPRESARIAL ────────────────────────────────────────────────────
 
-function CTAEmpresarial() {
+function CTAEmpresarial({ torneoNombre }: { torneoNombre?: string }) {
   return (
     <a href={WA_DEMO} target="_blank" rel="noopener noreferrer"
       className="block mb-4 rounded-xl overflow-hidden border border-yellow-600 hover:border-yellow-400 transition-all hover:scale-[1.01]"
@@ -280,7 +296,7 @@ function CTAEmpresarial() {
           <span className="text-2xl">🏆</span>
           <div>
             <p className="text-yellow-400 font-black text-sm uppercase leading-none">Polla Empresarial</p>
-            <p className="text-gray-400 text-xs mt-0.5">Tu empresa en el Mundial · Pide tu demo</p>
+            <p className="text-gray-400 text-xs mt-0.5">Tu empresa en {torneoNombre || 'el torneo'} · Pide tu demo</p>
           </div>
         </div>
         <div className="bg-green-500 text-white text-xs font-black px-3 py-2 rounded-lg whitespace-nowrap flex-shrink-0">
@@ -293,7 +309,10 @@ function CTAEmpresarial() {
 
 // ─── BANNER LA GRAN FINAL ─────────────────────────────────────────────────────
 
-function BannerFinal() {
+const TORNEO_MUNDIAL = '00000000-0000-0000-0000-000000002026';
+
+function BannerFinal({ torneo }: { torneo?: any }) {
+  if (torneo && torneo.id !== TORNEO_MUNDIAL) return null;
   const [final, setFinal] = useState<any>(null);
   useEffect(() => {
     const load = () => fetch(API + '/api/matches/00000000-0000-0000-0000-000000000104')
@@ -348,7 +367,7 @@ function BannerFinal() {
             {final.home_penalties != null && final.away_penalties != null &&
               ` (${final.home_penalties}-${final.away_penalties} pen.)`}
           </p>
-          <p className="text-gray-400 text-[11px] sm:text-xs">Copa Mundial FIFA 2026 · Ver resultados y ranking →</p>
+          <p className="text-gray-400 text-[11px] sm:text-xs">{torneo?.name || ''} · Ver resultados y ranking →</p>
         </div>
       </a>
     );
@@ -432,7 +451,7 @@ function PuntosChipHeader() {
 
 // ─── GOLEADORES DESTACADO ─────────────────────────────────────────────────────
 
-function GoleadoresDestacado({ torneoId }: { torneoId?: string }) {
+function GoleadoresDestacado({ torneoId, torneoNombre }: { torneoId?: string; torneoNombre?: string }) {
   const [scorers, setScorers] = useState<any[]>([]);
   useEffect(() => {
     if (!torneoId) return;
@@ -473,7 +492,7 @@ function GoleadoresDestacado({ torneoId }: { torneoId?: string }) {
             👑 Botín de Oro
           </p>
           <p className="text-gray-400 text-[10px] sm:text-xs mt-1 uppercase tracking-wider">
-            Máximos goleadores del Mundial 2026
+            Máximos goleadores{torneoNombre ? ` · ${torneoNombre}` : ''}
           </p>
 
           {/* Podio top 3 */}
@@ -803,15 +822,15 @@ export default function Home() {
   const [resultadosOpen, setResultadosOpen] = useState(false);
 
   useEffect(() => {
+    // El API ordena: activo > próximos > terminados. El primero es el torneo vigente.
     fetch(API + '/api/tournaments').then(r => r.json()).then(d => {
-      const t = d.data[0];
+      const t = d.data?.[0];
+      if (!t) return;
       setTorneo(t);
-      if (t) {
-        fetch(API + '/api/tournaments/' + t.id + '/standings').then(r => r.json()).then(d => setPosiciones(d));
-      }
+      fetch(API + '/api/tournaments/' + t.id + '/standings').then(r => r.json()).then(d => setPosiciones(d));
+      fetch(API + '/api/teams?tournament_id=' + t.id).then(r => r.json()).then(d => setEquipos(d.data || d));
+      fetch(API + '/api/matches?tournament_id=' + t.id).then(r => r.json()).then(d => setPartidos(d.data || []));
     });
-    fetch(API + '/api/teams').then(r => r.json()).then(d => setEquipos(d.data || d));
-    fetch(API + '/api/matches').then(r => r.json()).then(d => setPartidos(d.data || []));
     void getAccessToken().then(token => {
     if (token) {
       fetch(API + '/api/predictions/me', { headers: { Authorization: 'Bearer ' + token } })
@@ -824,6 +843,15 @@ export default function Home() {
     }
     });
   }, []);
+
+  const esMundial = !torneo || torneo.id === TORNEO_MUNDIAL;
+
+  // Si el torneo activo no tiene la pestaña abierta (p.ej. Posiciones en un
+  // torneo de solo eliminatorias), volver a Partidos.
+  useEffect(() => {
+    if (!esMundial && (tab === 'posiciones' || tab === 'bracket')) setTab('partidos');
+    if (esMundial && tab === 'llaves') setTab('partidos');
+  }, [esMundial, tab]);
 
   const grupoActualData = posiciones.find(g => g.group?.name === grupoActivo);
   const grupos = posiciones.map(g => g.group?.name).filter(Boolean).sort();
@@ -848,21 +876,22 @@ export default function Home() {
         <div className="flex items-center gap-3">
           <PuntosChipHeader />
           <div className="text-right">
-            <p className="text-yellow-500 font-black text-sm uppercase tracking-wider">Mundial 2026</p>
-            <p className="text-gray-500 text-xs">CO US MX CA</p>
+            <p className="text-yellow-500 font-black text-sm uppercase tracking-wider">{torneo?.name || 'Golazo'}</p>
+            <p className="text-gray-500 text-xs">{ESTADO_TORNEO[torneo?.status] || ''}</p>
           </div>
         </div>
       </header>
 
       <div className="bg-gradient-to-r from-yellow-600 via-yellow-500 to-yellow-600 px-4 py-2 text-center">
-        <p className="text-black font-black text-sm uppercase tracking-widest">Copa Mundial FIFA 2026 - 11 Jun - 19 Jul</p>
+        <p className="text-black font-black text-sm uppercase tracking-widest">
+          {torneo ? `${torneo.name}${rangoFechas(torneo) ? ' · ' + rangoFechas(torneo) : ''}` : 'Golazo · Te Lo Sugiero Sports'}
+        </p>
       </div>
 
       <div className="flex border-b border-gray-200 bg-white overflow-x-auto shadow-sm">
         {[
           { id:'partidos', label:'Partidos' },
-          { id:'posiciones', label:'Posiciones' },
-          { id:'bracket', label:'Bracket' },
+          ...(esMundial ? [{ id:'posiciones', label:'Posiciones' }, { id:'bracket', label:'Bracket' }] : [{ id:'llaves', label:'Llaves' }]),
           { id:'equipos', label:'Equipos' },
           { id:'polla', label:'Empresarial' },
           { id:'torneo', label:'Torneo' },
@@ -880,19 +909,19 @@ export default function Home() {
         {tab === 'partidos' && (
           <div>
             {/* 0. Banner de la final con video */}
-            <BannerFinal />
+            <BannerFinal torneo={torneo} />
 
             {/* 1. Hero Colombia */}
             <PartidoColombiaHero partidos={partidos} />
 
             {/* 2. CTA Empresarial */}
-            <CTAEmpresarial />
+            <CTAEmpresarial torneoNombre={torneo?.name} />
 
             {/* 2b. Goleadores destacados */}
-            <GoleadoresDestacado torneoId={torneo?.id} />
+            <GoleadoresDestacado torneoId={torneo?.id} torneoNombre={torneo?.name} />
 
             {/* 3. Estadísticas colapsables */}
-            <GolazoStats torneoId={torneo?.id} partidos={partidos} equipos={equipos} />
+            <GolazoStats torneoId={torneo?.id} torneoNombre={torneo?.name} partidos={partidos} equipos={equipos} />
 
             {/* 4. Próximos partidos / en vivo */}
             {partidosPendientes.length > 0 && (
@@ -939,7 +968,7 @@ export default function Home() {
 
         {tab === 'posiciones' && (
           <div className="space-y-4">
-            <CTAEmpresarial />
+            <CTAEmpresarial torneoNombre={torneo?.name} />
             <div className="flex gap-1 flex-wrap">
               {grupos.map(g => (
                 <button key={g} onClick={() => setGrupoActivo(g)}
@@ -995,14 +1024,15 @@ export default function Home() {
           </div>
         )}
 
-        {tab === 'bracket' && <BracketTab />}
+        {tab === 'bracket' && esMundial && <BracketTab />}
+        {tab === 'llaves' && <LlavesTab torneoId={torneo?.id} />}
         {tab === 'equipos' && <EquiposTab equipos={equipos} />}
 
         {tab === 'polla' && (
           <div className="space-y-6">
             <div className="bg-gradient-to-br from-yellow-900 to-gray-900 rounded-2xl p-6 border border-yellow-700">
               <div className="text-center mb-6">
-                <p className="text-yellow-400 text-xs uppercase tracking-widest font-bold mb-1">Mundial 2026</p>
+                <p className="text-yellow-400 text-xs uppercase tracking-widest font-bold mb-1">{torneo?.name || 'Golazo'}</p>
                 <h2 className="text-3xl font-black text-white uppercase">Polla Empresarial</h2>
                 <p className="text-gray-600 text-sm mt-2">La experiencia definitiva para equipos de trabajo</p>
               </div>
@@ -1036,7 +1066,7 @@ export default function Home() {
             <div className="flex items-center gap-3 mb-6">
               <span className="text-4xl">🏆</span>
               <div>
-                <p className="text-xs text-yellow-500 uppercase tracking-widest">Copa Mundial FIFA</p>
+                <p className="text-xs text-yellow-500 uppercase tracking-widest">{ESTADO_TORNEO[torneo?.status] || 'Torneo'}</p>
                 <h1 className="text-2xl font-black text-gray-900">{torneo.name}</h1>
               </div>
             </div>
@@ -1061,7 +1091,7 @@ export default function Home() {
 
       <footer className="border-t border-gray-100 py-4 text-center mt-8">
         <p className="text-yellow-600 font-black text-sm uppercase tracking-widest">Te Lo Sugiero Sports</p>
-        <p className="text-gray-600 text-xs mt-1">Copa Mundial FIFA 2026</p>
+        <p className="text-gray-600 text-xs mt-1">{torneo?.name || ''}</p>
       </footer>
 
     </main>

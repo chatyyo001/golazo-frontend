@@ -837,6 +837,15 @@ function EquiposTab({ equipos }: { equipos: any[] }) {
 // ─── MAIN ─────────────────────────────────────────────────────────────────────
 
 export default function Home() {
+  // Primera visita: mostrar la landing de bienvenida (video + cómo funciona).
+  useEffect(() => {
+    try {
+      if (!localStorage.getItem('golazo_bienvenida_vista')) {
+        window.location.replace('/bienvenida');
+      }
+    } catch {}
+  }, []);
+
   const [torneo, setTorneo] = useState<any>(null);
   const [equipos, setEquipos] = useState<any[]>([]);
   const [partidos, setPartidos] = useState<any[]>([]);
@@ -912,6 +921,7 @@ export default function Home() {
           </div>
         </div>
         <div className="flex items-center gap-3">
+          <a href="/bienvenida" className="hidden sm:inline text-xs text-gray-400 hover:text-yellow-400 transition-colors" title="¿Cómo funciona?">¿Cómo funciona?</a>
           <PuntosChipHeader />
           <div className="text-right">
             <p className="text-yellow-500 font-black text-sm uppercase tracking-wider">{nombreCorto(torneo) || 'Golazo'}</p>

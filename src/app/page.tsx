@@ -33,6 +33,16 @@ const ESTADO_TORNEO: Record<string, string> = {
   finished: 'Finalizado',
 };
 
+// Nombre corto para espacios estrechos: "Copa Mundial de la FIFA 2026" → "Mundial 2026"
+function nombreCorto(t: any) {
+  if (!t?.name) return '';
+  return t.name
+    .replace(/^Copa\s+/i, '')
+    .replace(/\s+de\s+la\s+FIFA/i, '')
+    .replace(/CONMEBOL\s+/i, '')
+    .trim();
+}
+
 function rangoFechas(t: any) {
   if (!t?.start_date) return '';
   const fmt = (d: string) =>
@@ -876,7 +886,7 @@ export default function Home() {
         <div className="flex items-center gap-3">
           <PuntosChipHeader />
           <div className="text-right">
-            <p className="text-yellow-500 font-black text-sm uppercase tracking-wider">{torneo?.name || 'Golazo'}</p>
+            <p className="text-yellow-500 font-black text-sm uppercase tracking-wider">{nombreCorto(torneo) || 'Golazo'}</p>
             <p className="text-gray-500 text-xs">{ESTADO_TORNEO[torneo?.status] || ''}</p>
           </div>
         </div>
@@ -884,7 +894,7 @@ export default function Home() {
 
       <div className="bg-gradient-to-r from-yellow-600 via-yellow-500 to-yellow-600 px-4 py-2 text-center">
         <p className="text-black font-black text-sm uppercase tracking-widest">
-          {torneo ? `${torneo.name}${rangoFechas(torneo) ? ' · ' + rangoFechas(torneo) : ''}` : 'Golazo · Te Lo Sugiero Sports'}
+          {torneo ? `${nombreCorto(torneo)}${rangoFechas(torneo) ? ' · ' + rangoFechas(torneo) : ''}` : 'Golazo · Te Lo Sugiero Sports'}
         </p>
       </div>
 
@@ -915,13 +925,13 @@ export default function Home() {
             <PartidoColombiaHero partidos={partidos} />
 
             {/* 2. CTA Empresarial */}
-            <CTAEmpresarial torneoNombre={torneo?.name} />
+            <CTAEmpresarial torneoNombre={nombreCorto(torneo)} />
 
             {/* 2b. Goleadores destacados */}
-            <GoleadoresDestacado torneoId={torneo?.id} torneoNombre={torneo?.name} />
+            <GoleadoresDestacado torneoId={torneo?.id} torneoNombre={nombreCorto(torneo)} />
 
             {/* 3. Estadísticas colapsables */}
-            <GolazoStats torneoId={torneo?.id} torneoNombre={torneo?.name} partidos={partidos} equipos={equipos} />
+            <GolazoStats torneoId={torneo?.id} torneoNombre={nombreCorto(torneo)} partidos={partidos} equipos={equipos} />
 
             {/* 4. Próximos partidos / en vivo */}
             {partidosPendientes.length > 0 && (
@@ -968,7 +978,7 @@ export default function Home() {
 
         {tab === 'posiciones' && (
           <div className="space-y-4">
-            <CTAEmpresarial torneoNombre={torneo?.name} />
+            <CTAEmpresarial torneoNombre={nombreCorto(torneo)} />
             <div className="flex gap-1 flex-wrap">
               {grupos.map(g => (
                 <button key={g} onClick={() => setGrupoActivo(g)}
@@ -1032,7 +1042,7 @@ export default function Home() {
           <div className="space-y-6">
             <div className="bg-gradient-to-br from-yellow-900 to-gray-900 rounded-2xl p-6 border border-yellow-700">
               <div className="text-center mb-6">
-                <p className="text-yellow-400 text-xs uppercase tracking-widest font-bold mb-1">{torneo?.name || 'Golazo'}</p>
+                <p className="text-yellow-400 text-xs uppercase tracking-widest font-bold mb-1">{nombreCorto(torneo) || 'Golazo'}</p>
                 <h2 className="text-3xl font-black text-white uppercase">Polla Empresarial</h2>
                 <p className="text-gray-600 text-sm mt-2">La experiencia definitiva para equipos de trabajo</p>
               </div>

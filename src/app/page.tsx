@@ -332,6 +332,10 @@ function BannerFinal({ torneo }: { torneo?: any }) {
     return () => clearInterval(t);
   }, []);
 
+  // Mientras cargan los datos del partido no mostramos nada: evita el parpadeo
+  // de "¡EN JUEGO!" (la cuenta regresiva ya pasó) antes de saber el resultado.
+  if (!final) return null;
+
   const terminado = final?.status === 'finished';
   const campeon = terminado
     ? (final.home_score !== final.away_score

@@ -839,7 +839,10 @@ export default function Home() {
     fetch(API + '/api/tournaments').then(r => r.json()).then(d => {
       const lista = d.data || [];
       setTorneos(lista);
-      if (lista[0]) setTorneo(lista[0]);
+      // Por defecto, el primero que ya tenga partidos cargados: evita aterrizar
+      // en un torneo próximo cuyo calendario aún no se ha sincronizado.
+      const inicial = lista.find((t: any) => (t.matches_count ?? 0) > 0) || lista[0];
+      if (inicial) setTorneo(inicial);
     });
     void getAccessToken().then(token => {
     if (token) {

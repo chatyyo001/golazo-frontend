@@ -517,8 +517,8 @@ function GoleadoresDestacado({ torneoId, torneoNombre, esMundial }: { torneoId?:
             </>
           )}
 
-          {/* Podio top 3 */}
-          <div className="mt-3 grid grid-cols-3 items-end gap-2">
+          {/* Podio top 3 (en el Mundial ya viene en el banner) */}
+          <div className={'mt-3 grid-cols-3 items-end gap-2 ' + (esMundial ? 'hidden' : 'grid')}>
         {orden.map((s: any) => {
           const e = estilo(s);
           return (

@@ -831,15 +831,15 @@ export default function Home() {
   const [lineupMatch, setLineupMatch] = useState<any>(null);
   const [resultadosOpen, setResultadosOpen] = useState(false);
 
+  // Lista de torneos disponibles (para el selector)
+  const [torneos, setTorneos] = useState<any[]>([]);
+
   useEffect(() => {
-    // El API ordena: activo > próximos > terminados. El primero es el torneo vigente.
+    // El API ordena: activo > próximos > terminados. El primero es el vigente.
     fetch(API + '/api/tournaments').then(r => r.json()).then(d => {
-      const t = d.data?.[0];
-      if (!t) return;
-      setTorneo(t);
-      fetch(API + '/api/tournaments/' + t.id + '/standings').then(r => r.json()).then(d => setPosiciones(d));
-      fetch(API + '/api/teams?tournament_id=' + t.id).then(r => r.json()).then(d => setEquipos(d.data || d));
-      fetch(API + '/api/matches?tournament_id=' + t.id).then(r => r.json()).then(d => setPartidos(d.data || []));
+      const lista = d.data || [];
+      setTorneos(lista);
+      if (lista[0]) setTorneo(lista[0]);
     });
     void getAccessToken().then(token => {
     if (token) {
@@ -853,6 +853,15 @@ export default function Home() {
     }
     });
   }, []);
+
+  // Al cambiar de torneo, recargar partidos, equipos y posiciones
+  useEffect(() => {
+    if (!torneo?.id) return;
+    setPartidos([]); setEquipos([]); setPosiciones([]);
+    fetch(API + '/api/tournaments/' + torneo.id + '/standings').then(r => r.json()).then(d => setPosiciones(Array.isArray(d) ? d : []));
+    fetch(API + '/api/teams?tournament_id=' + torneo.id).then(r => r.json()).then(d => setEquipos(d.data || d || []));
+    fetch(API + '/api/matches?tournament_id=' + torneo.id).then(r => r.json()).then(d => setPartidos(d.data || []));
+  }, [torneo?.id]);
 
   const esMundial = !torneo || torneo.id === TORNEO_MUNDIAL;
 
@@ -892,10 +901,25 @@ export default function Home() {
         </div>
       </header>
 
-      <div className="bg-gradient-to-r from-yellow-600 via-yellow-500 to-yellow-600 px-4 py-2 text-center">
-        <p className="text-black font-black text-sm uppercase tracking-widest">
-          {torneo ? `${nombreCorto(torneo)}${rangoFechas(torneo) ? ' · ' + rangoFechas(torneo) : ''}` : 'Golazo · Te Lo Sugiero Sports'}
-        </p>
+      <div className="bg-gradient-to-r from-yellow-600 via-yellow-500 to-yellow-600 px-4 py-2">
+        {torneos.length > 1 ? (
+          <div className="flex items-center justify-center gap-2 flex-wrap">
+            {torneos.map(t => (
+              <button key={t.id} onClick={() => setTorneo(t)}
+                className={'px-3 py-1 rounded-full text-xs font-black uppercase tracking-wide transition-colors ' +
+                  (torneo?.id === t.id
+                    ? 'bg-black text-yellow-400'
+                    : 'bg-black/15 text-black/70 hover:bg-black/25')}>
+                {nombreCorto(t)}
+                {t.status === 'upcoming' && <span className="ml-1 opacity-70">· pronto</span>}
+              </button>
+            ))}
+          </div>
+        ) : (
+          <p className="text-black font-black text-sm uppercase tracking-widest text-center">
+            {torneo ? `${nombreCorto(torneo)}${rangoFechas(torneo) ? ' · ' + rangoFechas(torneo) : ''}` : 'Golazo · Te Lo Sugiero Sports'}
+          </p>
+        )}
       </div>
 
       <div className="flex border-b border-gray-200 bg-white overflow-x-auto shadow-sm">
